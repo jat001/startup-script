@@ -1,0 +1,97 @@
+#! /bin/bash
+
+### BEGIN INIT INFO
+# Provides: goagent
+# Required-Start: $local_fs $network $remote_fs
+# Required-Stop: $local_fs $network $remote_fs
+# Should-Start: network-manager
+# Should-Stop: network-manager
+# Default-Start:  2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: goagent daemon
+# Description: goagent client daemon
+### END INIT INFO
+
+python2=/usr/bin/python2
+goagentApp=/media/Software/Software/GoAgent/local/proxy.py
+log=/var/log/goagent.log
+pidFile=/var/run/goagent.pid
+if [ -f "$pidFile" ]; then
+    pid=$(cat $pidFile)
+    checkProgress=$(kill -0 $pid 2>&1 > /dev/null && echo -n $?)
+    if [ "$checkProgress" != "0" ]; then
+        rm -f $pidFile
+        unset pid
+    fi
+fi
+script=/etc/init.d/goagent
+
+goagent() {
+    nohup $python2 $goagentApp >> "$log" 2>&1 & echo -n $! > $pidFile
+}
+
+doStart() {
+    if [ "$pid" ]; then
+        echo "goagent already running. pid = $pid"
+    else
+        goagent
+        echo 'Done.'
+    fi
+}
+
+doStop() {
+    if [ "$pid" ]; then
+        kill $pid
+        rm -f $pidFile
+        echo 'Done.'
+    else
+        echo 'goagent not running.'
+    fi
+}
+
+doRestart() {
+    if [ "$pid" ]; then
+        echo 'Stopping goagent...'
+        kill $pid
+        rm -f $pidFile
+        echo -e 'Done.\nStarting goagent...'
+        goagent
+        echo 'Done.'
+    else
+        echo -e 'goagent not running.\nStarting goagent...'
+        goagent
+        echo 'Done.'
+    fi
+}
+
+checkStatus() {
+    if [ "$pid" ]; then
+        echo "goagent is running. pid = $pid"
+    else
+        echo 'goagent not running.'
+    fi
+}
+
+case "$1" in
+    start)
+    echo 'Starting goagent...'
+    doStart
+    ;;
+    stop)
+    echo 'Stopping goagent...'
+    doStop
+    ;;
+    restart)
+    echo 'Restarting goagent: '
+    doRestart
+    ;;
+    status)
+    checkStatus
+    ;;
+    *)
+    echo "Usage: $script {start|stop|restart|status}" >&2
+    exit 3
+    ;;
+esac
+
+exit 0

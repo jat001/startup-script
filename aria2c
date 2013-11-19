@@ -1,0 +1,115 @@
+#! /bin/bash
+
+### BEGIN INIT INFO
+# Provides: aria2
+# Required-Start: $local_fs $network $remote_fs $syslog
+# Required-Stop: $local_fs $network $remote_fs $syslog
+# Should-Start: network-manager
+# Should-Stop: network-manager
+# Default-Start:  2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: aria2 daemon
+# Description: aria2 is a lightweight multi-protocol & multi-source command-line download utility.
+### END INIT INFO
+
+bin=/usr/bin/aria2c
+conf=/etc/aria2.conf
+pidFile=/var/run/aria2c.pid
+if [ -f "$pidFile" ]; then
+    pid=$(cat $pidFile)
+    checkProgress=$(kill -0 $pid 2>&1 > /dev/null && echo -n $?)
+    if [ "$checkProgress" != "0" ]; then
+        rm -f $pidFile
+        unset pid
+    fi
+fi
+script=/etc/init.d/aria2c
+log=/var/log/aria2.log
+dlDir=/media/Files/Downloads
+sessionFile=$dlDir/aria2.session
+
+aria2() {
+    $bin --conf-path="$conf" && pidof $bin > $pidFile
+}
+
+checkDlDir() {
+    if [ ! -d "$dlDir" ]; then
+        mkdir "$dlDir"
+    fi
+    if [ ! -f "$sessionFile" ]; then
+        touch "$sessionFile"
+    fi
+    if [ ! -f "$log" ]; then
+        touch "$log"
+    fi
+}
+
+doStart() {
+    if [ "$pid" ]; then
+        echo "aria2 daemon already running. pid = $pid"
+    else
+        checkDlDir
+        aria2
+        echo 'Done.'
+    fi
+}
+
+doStop() {
+    if [ "$pid" ]; then
+        kill $pid
+        rm -f $pidFile
+        echo 'Done.'
+    else
+        echo 'aria2 daemon not running.'
+    fi
+}
+
+doRestart() {
+    if [ "$pid" ]; then
+        echo 'Stopping aria2 daemon...'
+        kill $pid
+        rm -f $pidFile
+        echo 'Done'
+        sleep 1
+        echo 'Starting aria2 daemon...'
+        aria2
+        echo 'Done.'
+    else
+        echo -e 'aria2 daemon not running.\nStarting aria2 daemon...'
+        checkDlDir
+        aria2
+        echo 'Done.'
+    fi
+}
+
+checkStatus() {
+    if [ "$pid" ]; then
+        echo "aria2 daemon is running. pid = $pid"
+    else
+        echo 'aria2 daemon not running.'
+    fi
+}
+
+case "$1" in
+    start)
+    echo 'Starting aria2 daemon...'
+    doStart
+    ;;
+    stop)
+    echo 'Stopping aria2 daemon...'
+    doStop
+    ;;
+    restart)
+    echo 'Restarting aria2 daemon: '
+    doRestart
+    ;;
+    status)
+    checkStatus
+    ;;
+    *)
+    echo "Usage: $script {start|stop|restart|status}" >&2
+    exit 3
+    ;;
+esac
+
+exit 0

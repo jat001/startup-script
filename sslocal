@@ -1,0 +1,97 @@
+#! /bin/bash
+
+### BEGIN INIT INFO
+# Provides: shadowsocks
+# Required-Start: $local_fs $network $remote_fs
+# Required-Stop: $local_fs $network $remote_fs
+# Should-Start: network-manager
+# Should-Stop: network-manager
+# Default-Start:  2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: shadowsocks daemon
+# Description: shadowsocks client daemon
+### END INIT INFO
+
+bin=/usr/local/bin/sslocal
+config=/etc/shadowsocks.json
+log=/var/log/shadowsocks.log
+pidFile=/var/run/sslocal.pid
+if [ -f "$pidFile" ]; then
+    pid=$(cat $pidFile)
+    checkProgress=$(kill -0 $pid 2>&1 > /dev/null && echo -n $?)
+    if [ "$checkProgress" != "0" ]; then
+        rm -f $pidFile
+        unset pid
+    fi
+fi
+script=/etc/init.d/sslocal
+
+shadowsocks() {
+    nohup $bin -c "$config" >> "$log" 2>&1 & echo -n $! > $pidFile
+}
+
+doStart() {
+    if [ "$pid" ]; then
+        echo "shadowsocks already running. pid = $pid"
+    else
+        shadowsocks
+        echo 'Done.'
+    fi
+}
+
+doStop() {
+    if [ "$pid" ]; then
+        kill $pid
+        rm -f $pidFile
+        echo 'Done.'
+    else
+        echo 'shadowsocks not running.'
+    fi
+}
+
+doRestart() {
+    if [ "$pid" ]; then
+        echo 'Stopping shadowsocks...'
+        kill $pid
+        rm -f $pidFile
+        echo -e 'Done.\nStarting shadowsocks...'
+        shadowsocks
+        echo 'Done.'
+    else
+        echo -e 'shadowsocks not running.\nStarting shadowsocks...'
+        shadowsocks
+        echo 'Done.'
+    fi
+}
+
+checkStatus() {
+    if [ "$pid" ]; then
+        echo "shadowsocks is running. pid = $pid"
+    else
+        echo 'shadowsocks not running.'
+    fi
+}
+
+case "$1" in
+    start)
+    echo 'Starting shadowsocks...'
+    doStart
+    ;;
+    stop)
+    echo 'Stopping shadowsocks...'
+    doStop
+    ;;
+    restart)
+    echo 'Restarting shadowsocks: '
+    doRestart
+    ;;
+    status)
+    checkStatus
+    ;;
+    *)
+    echo "Usage: $script {start|stop|restart|status}" >&2
+    exit 3
+    ;;
+esac
+
+exit 0
