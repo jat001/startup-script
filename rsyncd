@@ -1,0 +1,97 @@
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides: rsync
+# Required-Start: $local_fs $network $remote_fs $syslog
+# Required-Stop: $local_fs $network $remote_fs $syslog
+# Should-Start: network-manager
+# Should-Stop: network-manager
+# Default-Start:  2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: rsync daemon
+# Description: rsync is an open source utility that provides fast incremental file transfer.
+### END INIT INFO
+
+config=/home/www/etc/rsync/rsyncd.conf
+pidFile=/var/run/rsyncd.pid
+if [ -f "$pidFile" ]; then
+    pid=$(cat $pidFile)
+    checkProgress=$(kill -0 $pid 2>&1 > /dev/null && echo -n $?)
+    if [ "$checkProgress" != "0" ]; then
+        rm -f $pidFile
+        unset pid
+    fi
+fi
+script=/etc/init.d/rsyncd
+
+rsync() {
+    rsync --daemon --config="$config"
+}
+
+doStart() {
+    if [ "$pid" ]; then
+        echo "rsync daemon already running. pid = $pid"
+    else
+        rsync
+        echo 'Done.'
+    fi
+}
+
+doStop() {
+    if [ "$pid" ]; then
+        kill $pid
+        rm -f $pidFile
+        echo 'Done.'
+    else
+        echo 'rsync daemon not running.'
+    fi
+}
+
+doRestart() {
+    if [ "$pid" ]; then
+        echo 'Stopping rsync daemon...'
+        kill $pid
+        rm -f $pidFile
+        echo 'Done'
+        sleep 1
+        echo 'Starting rsync daemon...'
+        rsync
+        echo 'Done.'
+    else
+        echo -e 'rsync daemon not running.\nStarting rsync daemon...'
+        rsync
+        echo 'Done.'
+    fi
+}
+
+checkStatus() {
+    if [ "$pid" ]; then
+        echo "rsync daemon is running. pid = $pid"
+    else
+        echo 'rsync daemon not running.'
+    fi
+}
+
+case "$1" in
+    start)
+    echo 'Starting rsync daemon...'
+    doStart
+    ;;
+    stop)
+    echo 'Stopping rsync daemon...'
+    doStop
+    ;;
+    restart)
+    echo 'Restarting rsync daemon: '
+    doRestart
+    ;;
+    status)
+    checkStatus
+    ;;
+    *)
+    echo "Usage: $script {start|stop|restart|status}" >&2
+    exit 3
+    ;;
+esac
+
+exit 0
