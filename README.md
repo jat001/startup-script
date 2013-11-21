@@ -7,7 +7,7 @@ You need add them to system services using `chkconfig`, `sysv-rc-conf` or `updat
 
 Do NOT forget change file permission to 755 (`-rwxr-xr-x`), change owner to root and change group to root.
 
-Maybe you also need change the application path, the config file path, the log file path or the pid file path.
+Maybe you also need change the application path, the configuration file path, the log file path or the pid file path.
 
 Linux 启动脚本
 =============

@@ -1,19 +1,19 @@
-#! /bin/bash
+#! /bin/sh
 
 ### BEGIN INIT INFO
-# Provides: rsync
-# Required-Start: $local_fs $network $remote_fs $syslog
-# Required-Stop: $local_fs $network $remote_fs $syslog
-# Should-Start: network-manager
-# Should-Stop: network-manager
-# Default-Start:  2 3 4 5
-# Default-Stop: 0 1 6
-# Short-Description: rsync daemon
-# Description: rsync is an open source utility that provides fast incremental file transfer.
+# Provides:          php-fpm
+# Required-Start:    $remote_fs $network
+# Required-Stop:     $remote_fs $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: starts php-fpm
+# Description:       starts the PHP FastCGI Process Manager daemon
 ### END INIT INFO
 
-name=rsyncd
-config=/home/www/etc/rsync/$name.conf
+name=php-fpm
+bin=/usr/local/php/sbin/$name
+config=/home/www/etc/php/$name.conf
+ini=/home/www/etc/php/php.ini
 pidFile=/var/run/$name.pid
 
 getPid() {
@@ -28,8 +28,8 @@ getPid() {
 ### Successfully start the application if the progress exists after 3 seconds.
 doStart() {
     echo -en "\033[1;36m[I]\033[0m  Starting $name"
-    ### rsync is built-in in most of linux distribution.
-    rsync --daemon --config="$config"
+    ### Block zend version notice.
+    $bin -c "$ini" -y "$config" > /dev/null 2>&1
 
     getPid
     for (( i=0; i<=5; i++ )); do
@@ -46,8 +46,8 @@ doStart() {
 
 ### Successfully stop the application if the progress doesn't exists in 10 seconds.
 doStop() {
-    echo -en "\033[1;36m[I]\033[0m  Stopping $name"
-    kill $pid
+    echo -en "\033[1;36m[I]\033[0m  Gracefully stopping $name"
+    kill -QUIT $pid
 
     for (( i=0; i<=10; i++ )); do
         if [ -d "/proc/$pid" ]; then
@@ -91,13 +91,24 @@ case "$1" in
     kill)
     getPid
     if [ "$pid" ]; then
-        echo -e "\033[1;36m[I]\033[0m  Forcefully killing the progress of $name..."
-        kill -9 $pid
-        rm -f $pidFile
-        echo -e "\033[1;32m[N]\033[0m  Kill $name Done."
+        echo -e "\033[1;36m[I]\033[0m  Fast shutdown $name..."
+        kill -TERM $pid
+        echo -e "\033[1;32m[N]\033[0m  Shutdown $name Done."
     else
         echo -e "\033[1;33m[W]\033[0m  $name not running."
         exit 2
+    fi
+    ;;
+
+    reload)
+    getPid
+    if [ "$pid" ]; then
+        echo -e "\033[1;36m[I]\033[0m  Reloading $name configuration file..."
+        kill -USR2 $pid
+        echo 'Done.'
+    else
+        echo -e "\033[1;33m[W]\033[0m  $name not running"
+        doStart
     fi
     ;;
 
@@ -123,7 +134,7 @@ case "$1" in
     ;;
 
     *)
-    echo "Usage: $0 {start|stop|kill|restart|status}." >&2
+    echo "Usage: $0 {start|stop|kill|reload|restart|status}." >&2
     exit 3
     ;;
 esac
