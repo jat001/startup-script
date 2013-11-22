@@ -104,8 +104,8 @@ case "$1" in
 
     restart)
     getPid
-    echo -e "\033[1;36m[I]\033[0m  Restarting $name: "
     if [ "$pid" ]; then
+        echo -e "\033[1;36m[I]\033[0m  Restarting $name: "
         doStop
         doStart
     else
