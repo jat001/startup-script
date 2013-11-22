@@ -58,7 +58,6 @@ doStop() {
             echo -n '.'
             sleep 1
         else
-            rm -f $pidFile
             ### Just for restart.
             unset pid
             echo -e "\n\033[1;32m[N]\033[0m  Stop $name succeeded."
