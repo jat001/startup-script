@@ -7,16 +7,26 @@
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: starts php-fpm
-# Description:       starts the PHP FastCGI Process Manager daemon
+# Description:       starts the PHP FastCGI Process Manager daemon.
 ### END INIT INFO
 
 PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin
 export PATH
 
+if [ "$(id -u)" != "0" ]; then
+    echo -e "\033[1;31m[E]\033[0m  You must have root permissions for run this script, please use sudo and try again."
+    exit 3
+fi
+
+### Maybe you need to change these.
 name=php-fpm
+### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
+### Try use `which $name` to find the full path, or just use `$name` if it in `$PATH`.
 bin=/usr/local/php/sbin/$name
+### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this to the new path.
 config=/home/www/etc/php/$name.conf
 ini=/home/www/etc/php/php.ini
+### By default, the pid file of programs are in `/var/run`. So you don't need to edit this. You can find the path in the configuration file.
 pidFile=/var/run/$name.pid
 
 getPid() {
@@ -28,7 +38,7 @@ getPid() {
     fi
 }
 
-### Successfully start the application if the progress exists after 3 seconds.
+### Successfully start the application if the progress exists after 5 seconds.
 doStart() {
     echo -en "\033[1;36m[I]\033[0m  Starting $name"
     ### Block zend version notice.
@@ -136,7 +146,8 @@ case "$1" in
     ;;
 
     *)
-    echo "Usage: $0 {start|stop|kill|reload|restart|status}." >&2
+    script=$(basename "$0")
+    echo "Usage: [sudo] $script {start|stop|kill|reload|restart|status}." >&2
     exit 3
     ;;
 esac

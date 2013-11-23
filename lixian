@@ -15,11 +15,24 @@
 PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin
 export PATH
 
+if [ "$(id -u)" != "0" ]; then
+    echo -e "\033[1;31m[E]\033[0m  You must have root permissions for run this script, please use sudo and try again."
+    exit 3
+fi
+
+### Maybe you need to change these.
 name=lixian
+### lixian need python2 to run it.
+### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
+### Try use `which $name` to find the full path, or just use `$name` if the binary file in `$PATH`.
 python2=/usr/local/bin/python2
+### Edit this to your own path.
 app=/home/www/root/$name/main.py
+### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this to the new path.
 config=/home/www/etc/$name.conf
+### In the most cases, the log file of programs are in `/var/log`. You are free to change this.
 log=/home/www/log/$name.app.log
+### By default, the pid file of programs are in `/var/run`. So you don't need to change this.
 pidFile=/var/run/$name.pid
 
 getPid() {
@@ -129,7 +142,8 @@ case "$1" in
     ;;
 
     *)
-    echo "Usage: $0 {start|stop|kill|restart|status}." >&2
+    script=$(basename "$0")
+    echo "Usage: [sudo] $script {start|stop|kill|restart|status}." >&2
     exit 3
     ;;
 esac

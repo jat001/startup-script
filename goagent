@@ -9,16 +9,28 @@
 # Default-Start:  2 3 4 5
 # Default-Stop: 0 1 6
 # Short-Description: goagent daemon
-# Description: goagent client daemon
+# Description: goagent client daemon.
 ### END INIT INFO
 
 PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin
 export PATH
 
+if [ "$(id -u)" != "0" ]; then
+    echo -e "\033[1;31m[E]\033[0m  You must have root permissions for run this script, please use sudo and try again."
+    exit 3
+fi
+
+### Maybe you need to change these.
 name=goagent
+### goagent need python2 to run it.
+### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
+### Try use `which $name` to find the full path, or just use `$name` if the binary file in `$PATH`.
 python2=/usr/bin/python2
+### Edit this to your own path.
 app=/media/Software/Software/GoAgent/local/proxy.py
+### In the most cases, the log file of programs are in `/var/log`. You are free to change this.
 log=/var/log/$name.log
+### By default, the pid file of programs are in `/var/run`. So you don't need to change this.
 pidFile=/var/run/$name.pid
 
 getPid() {
@@ -30,9 +42,10 @@ getPid() {
     fi
 }
 
-### Successfully start the application if the progress exists after 3 seconds.
+### Successfully start the application if the progress exists after 5 seconds.
 doStart() {
     echo -en "\033[1;36m[I]\033[0m  Starting $name"
+    cd $(dirname $app)
     nohup $python2 $app >> "$log" 2>&1 & echo -n $! > $pidFile
 
     pid=$!
@@ -128,7 +141,8 @@ case "$1" in
     ;;
 
     *)
-    echo "Usage: $0 {start|stop|kill|restart|status}." >&2
+    script=$(basename "$0")
+    echo "Usage: [sudo] $script {start|stop|kill|restart|status}." >&2
     exit 3
     ;;
 esac

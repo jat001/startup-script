@@ -9,16 +9,28 @@
 # Default-Start:  2 3 4 5
 # Default-Stop: 0 1 6
 # Short-Description: shadowsocks daemon
-# Description: sinosky shadowsocks server daemon
+# Description: sinosky shadowsocks server daemon.
 ### END INIT INFO
 
 PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin
 export PATH
 
+if [ "$(id -u)" != "0" ]; then
+    echo -e "\033[1;31m[E]\033[0m  You must have root permissions for run this script, please use sudo and try again."
+    exit 3
+fi
+
+### Maybe you need to change these.
 name=ssserver
+### shadowsocks need node.js to run it.
+### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
+### Try use `which $name` to find the full path, or just use `$name` if the binary file in `$PATH`.
 bin=/usr/bin/$name
+### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this to the new path.
 config=/home/www/etc/shadowsocks.json
+### In the most cases, the log file of programs are in `/var/log`. You are free to change this.
 log=/home/www/log/shadowsocks.log
+### By default, the pid file of programs are in `/var/run`. So you don't need to change this.
 pidFile=/var/run/$name.pid
 
 getPid() {
@@ -128,6 +140,7 @@ case "$1" in
     ;;
 
     *)
+    script=$(basename "$0")
     echo "Usage: $0 {start|stop|kill|restart|status}." >&2
     exit 3
     ;;

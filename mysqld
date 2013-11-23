@@ -15,9 +15,20 @@
 PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin
 export PATH
 
+if [ "$(id -u)" != "0" ]; then
+    echo -e "\033[1;31m[E]\033[0m  You must have root permissions for run this script, please use sudo and try again."
+    exit 3
+fi
+
+### Maybe you need to change these.
 name=mysqld
+### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
+### Try use `which mysqld_safe` to find the full path, or just use `mysqld_safe` if it in `$PATH`.
 bin=/usr/local/mysql/bin/mysqld_safe
+### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this to the new path.
 config=/home/www/etc/my.cnf
+### By default, the pid file of programs are in `/var/run`. So you don't need to edit this.
+### But pay attention to `$name`, it may be different. You can find the path in the configuration file.
 pidFile=/var/run/$name.pid
 
 getPid() {
@@ -113,11 +124,12 @@ case "$1" in
     ;;
 
     *)
+    script=$(basename "$0")
     ### You can't reload the configuration file in here, but you can use `SET` statement to change server system variables dynamically.
     ### See https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html and https://dev.mysql.com/doc/refman/5.6/en/set-statement.html.
     ### You also can't forcefully kill mysqld, it's not safe. And mysqld_safe will rerun mysqld.
-#   echo "Usage: $0 {start|stop|kill|restart|reload|status}" >&2
-    echo "Usage: $0 {start|stop|restart|status}." >&2
+#   echo "Usage: [sudo] $script {start|stop|kill|restart|reload|status}" >&2
+    echo "Usage: [sudo] $script {start|stop|restart|status}." >&2
     exit 3
     ;;
 esac
