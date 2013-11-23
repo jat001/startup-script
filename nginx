@@ -10,6 +10,9 @@
 # Description:       starts and stop the nginx web server
 ### END INIT INFO
 
+PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin
+export PATH
+
 name=nginx
 bin=/usr/local/nginx/sbin/$name
 config=/home/www/etc/nginx/$name.conf

@@ -12,6 +12,9 @@
 # Description: goagent client daemon
 ### END INIT INFO
 
+PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin
+export PATH
+
 name=goagent
 python2=/usr/bin/python2
 app=/media/Software/Software/GoAgent/local/proxy.py

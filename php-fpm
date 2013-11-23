@@ -10,6 +10,9 @@
 # Description:       starts the PHP FastCGI Process Manager daemon
 ### END INIT INFO
 
+PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin
+export PATH
+
 name=php-fpm
 bin=/usr/local/php/sbin/$name
 config=/home/www/etc/php/$name.conf

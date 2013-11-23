@@ -12,6 +12,9 @@
 # Description: rsync is an open source utility that provides fast incremental file transfer.
 ### END INIT INFO
 
+PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin
+export PATH
+
 name=rsyncd
 config=/home/www/etc/rsync/$name.conf
 pidFile=/var/run/$name.pid

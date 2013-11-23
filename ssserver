@@ -12,6 +12,9 @@
 # Description: sinosky shadowsocks server daemon
 ### END INIT INFO
 
+PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin
+export PATH
+
 name=ssserver
 bin=/usr/bin/$name
 config=/home/www/etc/shadowsocks.json

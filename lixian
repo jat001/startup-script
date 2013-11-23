@@ -12,6 +12,9 @@
 # Description: sinosky lixian server daemon.
 ### END INIT INFO
 
+PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin
+export PATH
+
 name=lixian
 python2=/usr/local/bin/python2
 app=/home/www/root/$name/main.py

@@ -12,6 +12,9 @@
 # Description: aria2 is a lightweight multi-protocol & multi-source command-line download utility.
 ### END INIT INFO
 
+PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin
+export PATH
+
 name=aria2c
 bin=/usr/bin/$name
 config=/etc/aria2.conf
@@ -47,7 +50,7 @@ doStart() {
     echo -en "\033[1;36m[I]\033[0m  Starting $name"
     ### aria2 doesn't create these file automatically, so we need create it manually.
     checkDlDir
-    ### I can't use `$!` to get the pid, and aria2 doesn't create pid file too.
+    ### I can't use `$!` to get the pid, and aria2 doesn't create the pid file too.
     $bin --conf-path="$config" && pidof $bin > $pidFile
 
     getPid

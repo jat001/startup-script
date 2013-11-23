@@ -12,6 +12,9 @@
 # Description: MySQL is a very fast and reliable SQL database engine.
 ### END INIT INFO
 
+PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin
+export PATH
+
 name=mysqld
 bin=/usr/local/mysql/bin/mysqld_safe
 config=/home/www/etc/my.cnf
