@@ -8,8 +8,8 @@
 # Should-Stop: network-manager
 # Default-Start:  2 3 4 5
 # Default-Stop: 0 1 6
-# Short-Description: goagent daemon
-# Description: goagent client daemon.
+# Short-Description: goagent client daemon
+# Description: A gae proxy forked from gappproxy/wallproxy.
 ### END INIT INFO
 
 PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin

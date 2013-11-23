@@ -8,7 +8,7 @@
 # Should-Stop: ypbind nscd ldap ntpd xntpd network-manager
 # Default-Start:  2 3 4 5
 # Default-Stop: 0 1 6
-# Short-Description: start and stop MySQL
+# Short-Description: mysql daemon
 # Description: MySQL is a very fast and reliable SQL database engine.
 ### END INIT INFO
 

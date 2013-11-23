@@ -6,8 +6,8 @@
 # Required-Stop:     $remote_fs $network
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: starts php-fpm
-# Description:       starts the PHP FastCGI Process Manager daemon.
+# Short-Description: php-fpm daemon
+# Description:       PHP-FPM (FastCGI Process Manager) is an alternative PHP FastCGI implementation with some additional features useful for sites of any size, especially busier sites.
 ### END INIT INFO
 
 PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin

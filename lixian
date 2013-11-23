@@ -8,8 +8,8 @@
 # Should-Stop: network-manager
 # Default-Start:  2 3 4 5
 # Default-Stop: 0 1 6
-# Short-Description: lixian daemon
-# Description: sinosky lixian server daemon.
+# Short-Description: sinosky lixian server daemon
+# Description: xunlei lixian api & a website project base on it & a plugin for flexget.
 ### END INIT INFO
 
 PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin

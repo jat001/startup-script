@@ -8,8 +8,8 @@
 # Should-Stop: network-manager
 # Default-Start:  2 3 4 5
 # Default-Stop: 0 1 6
-# Short-Description: shadowsocks daemon
-# Description: sinosky shadowsocks server daemon.
+# Short-Description: sinosky shadowsocks server daemon
+# Description: A tunnel proxy which help you get through firewalls.
 ### END INIT INFO
 
 PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin
@@ -22,7 +22,7 @@ fi
 
 ### Maybe you need to change these.
 name=ssserver
-### shadowsocks need node.js to run it.
+### shadowsocks need python2 or node.js to run it.
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
 ### Try use `which $name` to find the full path, or just use `$name` if the binary file in `$PATH`.
 bin=/usr/bin/$name
