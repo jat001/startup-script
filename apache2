@@ -1,15 +1,15 @@
 #! /bin/bash
 
 ### BEGIN INIT INFO
-# Provides:          nginx
-# Required-Start:    $local_fs $remote_fs $network $syslog
-# Required-Stop:     $local_fs $remote_fs $network $syslog
+# Provides:          httpd
+# Required-Start:    $local_fs $remote_fs $network $syslog $named
+# Required-Stop:     $local_fs $remote_fs $network $syslog $named
 # Should-Start:      network-manager
 # Should-Stop:       network-manager
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: nginx daemon
-# Description:       nginx is an HTTP and reverse proxy server, as well as a mail proxy server.
+# Short-Description: apache http server daemon
+# Description:       The Apache HTTP Server is a web server application notable for playing a key role in the initial growth of the World Wide Web.
 ### END INIT INFO
 
 PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin
@@ -21,13 +21,15 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 ### Maybe you need to change these.
-name=nginx
+name=httpd
+### The recommended method of invoking the httpd executable is to use the apachectl control script.
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
-### Try use `which $name` to find the full path, or just use `$name` if it in `$PATH`.
-bin=/usr/local/nginx/sbin/$name
+### Try use `which $name` to find the full path, or just use `apachectl` if it in `$PATH`.
+bin=/usr/local/apache2/bin/apachectl
 ### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this to the new path.
-config=/home/www/etc/nginx/$name.conf
-### By default, the pid file of programs are in `/var/run`. So you don't need to edit this. You can find the path in the configuration file.
+config=/home/www/etc/apache2/$name.conf
+### By default, the pid file of programs are in `/var/run`. So you don't need to edit this.
+### But pay attention to `$name`, it may be different. You can find the path in the configuration file.
 pidFile=/var/run/$name.pid
 
 getPid() {
@@ -42,7 +44,8 @@ getPid() {
 ### Successfully start the application if the progress exists after 5 seconds.
 doStart() {
     echo -en "\033[1;36m[I]\033[0m  Starting $name"
-    $bin -c "$config"
+    ### apachectl is a script for running httpd, so we can't use its pid.
+    $bin -f "$config" > /dev/null 2>&1 &
 
     getPid
     for (( i=0; i<=5; i++ )); do
@@ -60,7 +63,7 @@ doStart() {
 ### Successfully stop the application if the progress doesn't exists in 10 seconds.
 doStop() {
     echo -en "\033[1;36m[I]\033[0m  Gracefully stopping $name"
-    kill -QUIT $pid
+    kill -WINCH $pid
 
     for (( i=0; i<=10; i++ )); do
         if [ -d "/proc/$pid" ]; then
@@ -116,7 +119,7 @@ case "$1" in
     getPid
     if [ "$pid" ]; then
         echo -e "\033[1;36m[I]\033[0m  Reloading $name configuration file..."
-        kill -HUP $pid
+        kill -USR1 $pid
         echo 'Done.'
     else
         echo -e "\033[1;33m[W]\033[0m  $name not running"
