@@ -1,15 +1,15 @@
 #! /bin/bash
 
 ### BEGIN INIT INFO
-# Provides: shadowsocks
-# Required-Start: $local_fs $remote_fs $network $syslog $named
-# Required-Stop: $local_fs $remote_fs $network $syslog $named
-# Should-Start: network-manager
-# Should-Stop: network-manager
-# Default-Start:  2 3 4 5
-# Default-Stop: 0 1 6
+# Provides:          ssserver
+# Required-Start:    $local_fs $network $named $remote_fs $syslog
+# Required-Stop:     $local_fs $network $named $remote_fs $syslog
+# Should-Start:      $network $named
+# Should-Stop:       $network $named
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
 # Short-Description: sinosky shadowsocks server daemon
-# Description: A tunnel proxy which help you get through firewalls.
+# Description:       A tunnel proxy which help you get through firewalls.
 ### END INIT INFO
 
 PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin

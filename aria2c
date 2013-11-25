@@ -1,15 +1,15 @@
 #! /bin/bash
 
 ### BEGIN INIT INFO
-# Provides: aria2
-# Required-Start: $local_fs $network $remote_fs $syslog $named
-# Required-Stop: $local_fs $network $remote_fs $syslog $named
-# Should-Start: network-manager
-# Should-Stop: network-manager
-# Default-Start: 2 3 4 5
-# Default-Stop: 0 1 6
+# Provides:          aria2c
+# Required-Start:    $local_fs $network $named $remote_fs $syslog
+# Required-Stop:     $local_fs $network $named $remote_fs $syslog
+# Should-Start:      $network $named
+# Should-Stop:       $network $named
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
 # Short-Description: aria2 daemon
-# Description: aria2 is a lightweight multi-protocol & multi-source command-line download utility.
+# Description:       aria2 is a lightweight multi-protocol & multi-source command-line download utility.
 ### END INIT INFO
 
 PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin

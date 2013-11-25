@@ -1,11 +1,11 @@
 #! /bin/bash
 
 ### BEGIN INIT INFO
-# Provides:          httpd
-# Required-Start:    $local_fs $remote_fs $network $syslog $named
-# Required-Stop:     $local_fs $remote_fs $network $syslog $named
-# Should-Start:      network-manager
-# Should-Stop:       network-manager
+# Provides:          apache2
+# Required-Start:    $local_fs $network $named $remote_fs $syslog
+# Required-Stop:     $local_fs $network $named $remote_fs $syslog
+# Should-Start:      $network $named
+# Should-Stop:       $network $named
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: apache http server daemon

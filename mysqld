@@ -1,15 +1,15 @@
 #! /bin/bash
 
 ### BEGIN INIT INFO
-# Provides: mysql
-# Required-Start: $local_fs $network $remote_fs $syslog $named
-# Required-Stop: $local_fs $network $remote_fs $syslog $named
-# Should-Start: ypbind nscd ldap ntpd xntpd network-manager
-# Should-Stop: ypbind nscd ldap ntpd xntpd network-manager
-# Default-Start:  2 3 4 5
-# Default-Stop: 0 1 6
+# Provides:          mysqld
+# Required-Start:    $local_fs $network $named $remote_fs $syslog
+# Required-Stop:     $local_fs $network $named $remote_fs $syslog
+# Should-Start:      $network $named
+# Should-Stop:       $network $named
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
 # Short-Description: mysql daemon
-# Description: MySQL is a very fast and reliable SQL database engine.
+# Description:       MySQL is a very fast and reliable SQL database engine.
 ### END INIT INFO
 
 PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin
