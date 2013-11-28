@@ -118,7 +118,7 @@ case "$1" in
     if [ "$pid" ]; then
         echo -e "\033[1;36m[I]\033[0m  Reloading $name configuration file..."
         kill -HUP $pid
-        echo 'Done.'
+        echo -e "\033[1;32m[N]\033[0m  Reload $name Done."
     else
         echo -e "\033[1;33m[W]\033[0m  $name not running"
         doStart
