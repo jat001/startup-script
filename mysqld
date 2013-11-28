@@ -48,6 +48,12 @@ doStart() {
     ### mysqld_safe is a script for running mysqld, so we can't use its pid.
     $bin --defaults-file="$config" > /dev/null 2>&1 &
 
+    ### Wait for mysqld start. Try waiting for a longer time if start mysqld failed.
+    for (( i=0; i<=3; i++ )); do
+        echo -n '.'
+        sleep 1
+    done
+
     getPid
     for (( i=0; i<=5; i++ )); do
         if kill -0 $pid 2>/dev/null; then
