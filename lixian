@@ -91,7 +91,7 @@ case "$1" in
     start)
     getPid
     if [ "$pid" ]; then
-        echo -e "\033[1;33m[W]\033[0m  $name already running. pid = $pid"
+        echo -e "\033[1;33m[W]\033[0m  $name is already running. pid = $pid"
         exit 2
     else
         doStart
