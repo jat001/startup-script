@@ -24,7 +24,7 @@ fi
 name=ssserver
 ### shadowsocks need python2 or node.js to run it.
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
-### Try use `which $name` to find the full path, or just use `$name` if the binary file in `$PATH`.
+### Try use `which $name` to find the full path, or just use `$name` if the binary file is in `$PATH`.
 bin=/usr/local/node/bin/$name
 ### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this to the new path.
 config=/home/www/etc/shadowsocks.json

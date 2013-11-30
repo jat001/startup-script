@@ -24,7 +24,7 @@ fi
 name=goagent
 ### goagent need python2 to run it.
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
-### Try use `which $name` to find the full path, or just use `$name` if the binary file in `$PATH`.
+### Try use `which $name` to find the full path, or just use `$name` if the binary file is in `$PATH`.
 python2=/usr/bin/python2
 ### Edit this to your own path.
 app=/media/Software/Software/GoAgent/local/proxy.py

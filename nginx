@@ -23,7 +23,7 @@ fi
 ### Maybe you need to change these.
 name=nginx
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
-### Try use `which $name` to find the full path, or just use `$name` if it in `$PATH`.
+### Try use `which $name` to find the full path, or just use `$name` if it is in `$PATH`.
 bin=/usr/local/nginx/sbin/$name
 ### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this to the new path.
 config=/home/www/etc/nginx/$name.conf

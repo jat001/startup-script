@@ -24,7 +24,7 @@ fi
 name=httpd
 ### The recommended method of invoking the httpd executable is to use the apachectl control script.
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
-### Try use `which $name` to find the full path, or just use `apachectl` if it in `$PATH`.
+### Try use `which $name` to find the full path, or just use `apachectl` if it is in `$PATH`.
 bin=/usr/local/apache/bin/apachectl
 ### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this to the new path.
 config=/home/www/etc/apache/$name.conf
