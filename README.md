@@ -5,7 +5,7 @@ Some simple but useful startup script in `/etc/init.d`.
 
 You need to add them to system services using `chkconfig`, `sysv-rc-conf` or `update-rc.d`.
 
-Don't forget modify file permission to 755 (`-rwxr-xr-x`), modify owner to root and modify group to root.
+Don't forget change file permissions to 755 (`-rwxr-xr-x`), change owner to root and change group to root.
 
 Maybe you also need to modify the application path, the configuration file path, the log file path or the pid file path.
 

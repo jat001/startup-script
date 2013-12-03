@@ -46,8 +46,8 @@ getPid() {
 
 doStart() {
     echo -en "\033[1;36m[I]\033[0m  Starting $name"
-    ### I don't want it to run as root. But the program may be doesn't have permission to create the log file or the database directory.
-    ### So you need to create them manually, and modify owner & group. You can find the paths in the configuration file.
+    ### I don't want it to run as root. But the program may be doesn't have permissions to create the log file or the database directory.
+    ### So you need to create them manually, and change owner & group. You can find the paths in the configuration file.
     if su redis -s /bin/bash -c "$bin '$config'"; then
         echo -n '.'
     else
