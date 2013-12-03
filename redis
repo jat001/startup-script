@@ -31,8 +31,6 @@ config=/home/www/etc/$name.conf
 ### By default, the pid file of programs are in `/var/run`. So you don't need to edit this variable.
 ### But pay attention to `$name`, it may be different. You can find the path in the configuration file.
 pidFile=/var/run/$name.pid
-### By default, the port is 6379. So you don't need to edit this variable. And you can find it in the configuration file.
-port=6379
 
 script=$(basename "$0")
 
@@ -79,7 +77,7 @@ doStart() {
 
 doStop() {
     echo -en "\033[1;36m[I]\033[0m  Stopping $name"
-    if $cliBin -p $port shutdown; then
+    if $cliBin shutdown; then
         echo -n '.'
     else
         echo -e "\n\033[1;31m[E]\033[0m  Stop $name error."
