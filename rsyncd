@@ -20,13 +20,15 @@ if [ "$(id -u)" != "0" ]; then
     exit 3
 fi
 
-### Maybe you need to change these.
+### Maybe you need to modify these.
 name=rsyncd
 ### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this to the new path.
 config=/home/www/etc/rsync/$name.conf
 ### By default, the pid file of programs are in `/var/run`. So you don't need to edit this.
 ### But pay attention to `$name`, it may be different. You can find the path in the configuration file.
 pidFile=/var/run/$name.pid
+
+script=$(basename "$0")
 
 getPid() {
     ### Delete spaces, tabs and newlines.
@@ -38,13 +40,18 @@ getPid() {
     fi
 }
 
-### Successfully start the application if the progress exists after 5 seconds.
 doStart() {
     echo -en "\033[1;36m[I]\033[0m  Starting $name"
     ### rsync is built-in in most of linux distribution.
-    rsync --daemon --config="$config"
+    if rsync --daemon --config="$config"; then
+        echo -n '.'
+        getPid
+    else
+        echo -e "\n\033[1;31m[E]\033[0m  Start $name error."
+        exit 1
+    fi
 
-    getPid
+    ### Successfully start the application if the progress exists after 5 seconds.
     for (( i=0; i<=5; i++ )); do
         if kill -0 $pid 2>/dev/null; then
             echo -n '.'
@@ -57,15 +64,21 @@ doStart() {
     echo -e "\n\033[1;32m[N]\033[0m  Start $name success."
 }
 
-### Successfully stop the application if the progress doesn't exists in 10 seconds.
+
 doStop() {
     echo -en "\033[1;36m[I]\033[0m  Stopping $name"
-    kill $pid
+    if kill $pid; then
+        echo -n '.'
+    else
+        echo -e "\n\033[1;31m[E]\033[0m  Stop $name error. Try using $script kill."
+        exit 1
+    fi
 
+    ### Successfully stop the application if the progress doesn't exists in 10 seconds.
     for (( i=0; i<=10; i++ )); do
         if kill -0 $pid 2>/dev/null; then
             if [ "$i" = "10" ]; then
-                echo -e "\n\033[1;31m[E]\033[0m  Stop $name failed. Try using $0 kill."
+                echo -e "\n\033[1;31m[E]\033[0m  Stop $name failed. Try using $script kill."
                 exit 1
             fi
             echo -n '.'
@@ -140,7 +153,6 @@ case "$1" in
     ;;
 
     *)
-    script=$(basename "$0")
     echo "Usage: [sudo] $script {start|stop|kill|restart|status}." >&2
     exit 3
     ;;

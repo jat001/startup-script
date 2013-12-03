@@ -20,7 +20,7 @@ if [ "$(id -u)" != "0" ]; then
     exit 3
 fi
 
-### Maybe you need to change these.
+### Maybe you need to modify these.
 name=ssserver
 ### shadowsocks need python2 or node.js to run it.
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
@@ -28,10 +28,12 @@ name=ssserver
 bin=/usr/local/node/bin/$name
 ### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this to the new path.
 config=/home/www/etc/shadowsocks.json
-### In the most cases, the log file of programs are in `/var/log`. You are free to change this.
+### In the most cases, the log file of programs are in `/var/log`. You are free to modify this.
 log=/home/www/log/shadowsocks.log
-### By default, the pid file of programs are in `/var/run`. So you don't need to change this.
+### By default, the pid file of programs are in `/var/run`. So you don't need to modify this.
 pidFile=/var/run/$name.pid
+
+script=$(basename "$0")
 
 getPid() {
     ### Delete spaces, tabs and newlines.
@@ -43,12 +45,18 @@ getPid() {
     fi
 }
 
-### Successfully start the application if the progress exists after 5 seconds.
 doStart() {
     echo -en "\033[1;36m[I]\033[0m  Starting $name"
-    nohup $bin -c "$config" >> "$log" 2>&1 & echo -n $! > $pidFile
+    if nohup $bin -c "$config" >> "$log" 2>&1 & then
+        echo -n '.'
+        pid=$!
+        echo -n $pid > $pidFile
+    else
+        echo -e "\n\033[1;31m[E]\033[0m  Start $name error."
+        exit 1
+    fi
 
-    pid=$!
+    ### Successfully start the application if the progress exists after 5 seconds.
     for (( i=0; i<=5; i++ )); do
         if kill -0 $pid 2>/dev/null; then
             echo -n '.'
@@ -62,15 +70,21 @@ doStart() {
     echo -e "\n\033[1;32m[N]\033[0m  Start $name success."
 }
 
-### Successfully stop the application if the progress doesn't exists in 10 seconds.
+
 doStop() {
     echo -en "\033[1;36m[I]\033[0m  Stopping $name"
-    kill $pid
+    if kill $pid; then
+        echo -n '.'
+    else
+        echo -e "\n\033[1;31m[E]\033[0m  Stop $name error. Try using $script kill."
+        exit 1
+    fi
 
+    ### Successfully stop the application if the progress doesn't exists in 10 seconds.
     for (( i=0; i<=10; i++ )); do
         if kill -0 $pid 2>/dev/null; then
             if [ "$i" = "10" ]; then
-                echo -e "\n\033[1;31m[E]\033[0m  Stop $name failed. Try using $0 kill."
+                echo -e "\n\033[1;31m[E]\033[0m  Stop $name failed. Try using $script kill."
                 exit 1
             fi
             echo -n '.'
@@ -146,8 +160,7 @@ case "$1" in
     ;;
 
     *)
-    script=$(basename "$0")
-    echo "Usage: $0 {start|stop|kill|restart|status}." >&2
+    echo "Usage: [sudo] $script {start|stop|kill|restart|status}." >&2
     exit 3
     ;;
 esac
