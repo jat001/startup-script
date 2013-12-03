@@ -20,14 +20,14 @@ if [ "$(id -u)" != "0" ]; then
     exit 3
 fi
 
-### Maybe you need to modify these.
+### Maybe you need to modify these variables.
 name=nginx
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
 ### Try use `which $name` to find the full path, or just use `$name` if it is in `$PATH`.
 bin=/usr/local/nginx/sbin/$name
-### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this to the new path.
+### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this variable to the new path.
 config=/home/www/etc/nginx/$name.conf
-### By default, the pid file of programs are in `/var/run`. So you don't need to edit this. You can find the path in the configuration file.
+### By default, the pid file of programs are in `/var/run`. So you don't need to edit this variable. You can find the path in the configuration file.
 pidFile=/var/run/$name.pid
 
 script=$(basename "$0")

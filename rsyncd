@@ -20,11 +20,11 @@ if [ "$(id -u)" != "0" ]; then
     exit 3
 fi
 
-### Maybe you need to modify these.
+### Maybe you need to modify these variables.
 name=rsyncd
-### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this to the new path.
+### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this variable to the new path.
 config=/home/www/etc/rsync/$name.conf
-### By default, the pid file of programs are in `/var/run`. So you don't need to edit this.
+### By default, the pid file of programs are in `/var/run`. So you don't need to edit this variable.
 ### But pay attention to `$name`, it may be different. You can find the path in the configuration file.
 pidFile=/var/run/$name.pid
 

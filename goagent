@@ -20,17 +20,17 @@ if [ "$(id -u)" != "0" ]; then
     exit 3
 fi
 
-### Maybe you need to modify these.
+### Maybe you need to modify these variables.
 name=goagent
 ### goagent need python2 to run it.
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
 ### Try use `which $name` to find the full path, or just use `$name` if the binary file is in `$PATH`.
 python2=/usr/bin/python2
-### Edit this to your own path.
+### Edit this variable to your own path.
 app=/media/Software/Software/GoAgent/local/proxy.py
-### In the most cases, the log file of programs are in `/var/log`. You are free to modify this.
+### In the most cases, the log file of programs are in `/var/log`. You are free to modify this variable.
 log=/var/log/$name.log
-### By default, the pid file of programs are in `/var/run`. So you don't need to modify this.
+### By default, the pid file of programs are in `/var/run`. So you don't need to modify this variable.
 pidFile=/var/run/$name.pid
 
 script=$(basename "$0")

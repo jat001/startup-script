@@ -20,16 +20,16 @@ if [ "$(id -u)" != "0" ]; then
     exit 3
 fi
 
-### Maybe you need to modify these.
+### Maybe you need to modify these variables.
 name=aria2c
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
 ### Try use `which $name` to find the full path, or just use `$name` if the binary file is in `$PATH`.
 bin=/usr/bin/$name
-### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this to the new path.
+### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this variable to the new path.
 config=/etc/aria2.conf
 ### In the most cases, the log file of programs are in `/var/log`. You can find the path in the configuration file.
 log=/var/log/aria2.log
-### By default, the pid file of programs are in `/var/run`. So you don't need to edit this.
+### By default, the pid file of programs are in `/var/run`. So you don't need to edit this variable.
 pidFile=/var/run/$name.pid
 
 script=$(basename "$0")
@@ -44,7 +44,7 @@ getPid() {
     fi
 }
 
-### Modify these to your own path.
+### Modify these variables to your own path.
 dlDir=/media/Files/Downloads
 sessionFile=$dlDir/aria2.session
 
@@ -66,9 +66,9 @@ checkDlDir() {
 
 doStart() {
     echo -en "\033[1;36m[I]\033[0m  Starting $name"
-    ### aria2 doesn't create these file automatically, so we need create it manually.
+    ### aria2 doesn't create these files automatically, so we need to create them manually.
     checkDlDir
-    ### I don't want it run as root. aria2 doesn't create a pid file.
+    ### I don't want it to run as root. aria2 doesn't create a pid file.
     if su pi -s /bin/bash -c "$bin --conf-path='$config'"; then
         echo -n '.'
         pid=$(pgrep -f $bin)

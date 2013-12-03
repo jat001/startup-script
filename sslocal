@@ -20,17 +20,17 @@ if [ "$(id -u)" != "0" ]; then
     exit 3
 fi
 
-### Maybe you need to modify these.
+### Maybe you need to modify these variables.
 name=sslocal
 ### shadowsocks need python2 or node.js to run it.
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
 ### Try use `which $name` to find the full path, or just use `$name` if the binary file is in `$PATH`.
 bin=/usr/local/bin/$name
-### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this to the new path.
+### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this variable to the new path.
 config=/etc/shadowsocks.json
-### In the most cases, the log file of programs are in `/var/log`. You are free to modify this.
+### In the most cases, the log file of programs are in `/var/log`. You are free to modify this variable.
 log=/var/log/shadowsocks.log
-### By default, the pid file of programs are in `/var/run`. So you don't need to modify this.
+### By default, the pid file of programs are in `/var/run`. So you don't need to modify this variable.
 pidFile=/var/run/$name.pid
 
 script=$(basename "$0")
