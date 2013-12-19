@@ -56,7 +56,6 @@ checkDlDir() {
     if [ ! -f "$sessionFile" ]; then
         touch "$sessionFile"
     fi
-    ### Download disk may be NTFS.
     chown -R pi:pi "$dlDir"
 
     if [ ! -f "$log" ]; then
