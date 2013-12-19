@@ -51,13 +51,14 @@ sessionFile=$dlDir/aria2.session
 ### Modify 'pi' to your own username.
 checkDlDir() {
     if [ ! -d "$dlDir" ]; then
-        mkdir "$dlDir"
-        chown pi:pi "$dlDir"
+        mkdir -p "$dlDir"
     fi
     if [ ! -f "$sessionFile" ]; then
         touch "$sessionFile"
-        chown pi:pi "$sessionFile"
     fi
+    ### Download disk may be NTFS.
+    chown -R pi:pi "$dlDir"
+
     if [ ! -f "$log" ]; then
         touch "$log"
         chown pi:pi "$log"
