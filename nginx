@@ -35,7 +35,7 @@ script=$(basename "$0")
 getPid() {
     ### Delete spaces, tabs and newlines.
     pid=$(cat $pidFile 2>/dev/null | tr -d ' \t\n')
-    ### `$pidFile` may be blank. If the progress exists, `! kill -0 $pid 2>/dev/null` returns 1.
+    ### `$pidFile` may be blank. If the progress exists, `! kill -0 $pid 2>/dev/null` will return 1.
     if [ ! "$pid" ] || ! kill -0 $pid 2>/dev/null; then
         rm -f $pidFile
         unset pid
