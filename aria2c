@@ -69,7 +69,7 @@ doStart() {
     ### aria2 doesn't create these files automatically, so we need to create them manually.
     checkDlDir
     ### I don't want it to run as root. aria2 doesn't create a pid file.
-    if su pi -s /bin/bash -c "$bin --conf-path='$config'"; then
+    if su pi -s /bin/bash -c "$bin --conf-path='$config'" 2>/dev/null; then
         echo -n '.'
         pid=$(pgrep -f $bin)
         echo -n $pid > $pidFile
