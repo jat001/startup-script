@@ -46,7 +46,7 @@ getPid() {
 
 doStart() {
     echo -en "\033[1;36m[I]\033[0m  Starting $name"
-    ### mysqld_safe doesn't have permissions to create the pid file on Ubuntu if it doesn't run as root.
+    ### mysqld_safe doesn't have permissions to create the pid file on Debian (Ubuntu) if it doesn't run as root.
     chmod 777 /var/run
     ### mysqld_safe is a script for running mysqld, so we can't use its pid.
     if $bin --defaults-file="$config" > /dev/null 2>&1 & then
