@@ -2,8 +2,8 @@
 
 ### BEGIN INIT INFO
 # Provides:          lixian
-# Required-Start:    $local_fs $network $named $remote_fs $syslog
-# Required-Stop:     $local_fs $network $named $remote_fs $syslog
+# Required-Start:    $local_fs $network $named $remote_fs $syslog mysqld
+# Required-Stop:     $local_fs $network $named $remote_fs $syslog mysqld
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: sinosky lixian server daemon

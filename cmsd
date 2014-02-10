@@ -2,8 +2,8 @@
 
 ### BEGIN INIT INFO
 # Provides:          cmsd
-# Required-Start:    $local_fs $network $named $remote_fs $syslog
-# Required-Stop:     $local_fs $network $named $remote_fs $syslog
+# Required-Start:    $all
+# Required-Stop:     $all
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: aliyun jiankong agent
@@ -43,7 +43,7 @@ getPid() {
 
 doStart() {
     echo -en "\033[1;36m[I]\033[0m  Starting $name"
-    ### rsync is built-in in most of linux distribution.
+    ### cmsd is a script for running agent_cms, so we can't use its pid.
     if $cmsd start; then
         echo -n '.'
     else
