@@ -9,7 +9,7 @@ Don't forget change the file permissions to 755 (`-rwxr-xr-x`), change the owner
 
 Maybe you also need to modify the program path, the configuration file path, the log file path or the pid file path.
 
-In Some Linux distributions (such as Debian, Ubuntu, Fedora, etc), they use tmpfs to mount `/run` temporarily. You must change the folder permissions to 777 (`drwxrwxrwx`) at system startup to make the programs have permissions to create a pid file in `/var/run`.
+In Some Linux distributions (such as Debian, Ubuntu, Fedora, etc), they use tmpfs to mount `/run` temporarily. You must change the directory permissions to 777 (`drwxrwxrwx`) at system startup, to make the program doesn't run as root, has permissions to create a pid file in `/var/run`.
 
 For example, add `chmod 777 /run` in `/etc/init/mounted-run.conf`:
 
@@ -57,7 +57,7 @@ Linux 启动脚本
 
 你也可能需要更改程序路径、配置文件路径、日志文件路径或 pid 文件路径。
 
-在一些 Linux 发行版中（如 Debian、Ubuntu 和 Fedora 等）使用 tmpfs 临时挂载 /run，必须在系统启动时把它的权限改为 777（`drwxrwxrwx`）才能使程序有权限在 `/var/run` 中创建 pid 文件。
+在一些 Linux 发行版中（如 Debian、Ubuntu 和 Fedora 等）使用 tmpfs 临时挂载 `/run`，必须在系统启动时把该目录的权限改为 777（`drwxrwxrwx`），才能使不以 root 身份运行的程序有权限在 `/var/run` 中创建 pid 文件。
 
 比如在 `/etc/init/mounted-run.conf` 中加入 `chmod 777 /run`：
 
