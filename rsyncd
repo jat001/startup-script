@@ -4,8 +4,6 @@
 # Provides:          rsyncd
 # Required-Start:    $local_fs $network $named $remote_fs $syslog
 # Required-Stop:     $local_fs $network $named $remote_fs $syslog
-# Should-Start:      $network $named
-# Should-Stop:       $network $named
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: rsync daemon
@@ -16,8 +14,8 @@ PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin
 export PATH
 
 if [ "$(id -u)" != "0" ]; then
-    echo -e "\033[1;31m[E]\033[0m  You must have root permissions for run this script, please use sudo and try again."
-    exit 3
+    echo -e "\033[1;31m[E]\033[0m  You must have root permissions for run this script, please use sudo and try again." >&2
+    exit 4
 fi
 
 ### Maybe you need to modify these variables.
@@ -51,7 +49,7 @@ doStart() {
         exit 1
     fi
 
-    ### Successfully start the application if the progress exists after 5 seconds.
+    ### Successfully start the program if the progress exists after 5 seconds.
     for (( i=0; i<=5; i++ )); do
         if kill -0 $pid 2>/dev/null; then
             echo -n '.'
@@ -74,7 +72,7 @@ doStop() {
         exit 1
     fi
 
-    ### Successfully stop the application if the progress doesn't exists in 10 seconds.
+    ### Successfully stop the program if the progress doesn't exists in 10 seconds.
     for (( i=0; i<=10; i++ )); do
         if kill -0 $pid 2>/dev/null; then
             if [ "$i" = "10" ]; then
@@ -97,7 +95,6 @@ case "$1" in
     getPid
     if [ "$pid" ]; then
         echo -e "\033[1;33m[W]\033[0m  $name is already running. pid = $pid"
-        exit 2
     else
         doStart
     fi
@@ -109,7 +106,6 @@ case "$1" in
         doStop
     else
         echo -e "\033[1;33m[W]\033[0m  $name isn't running."
-        exit 2
     fi
     ;;
 
@@ -127,7 +123,6 @@ case "$1" in
         fi
     else
         echo -e "\033[1;33m[W]\033[0m  $name isn't running."
-        exit 2
     fi
     ;;
 
@@ -149,6 +144,7 @@ case "$1" in
         echo -e "\033[1;32m[N]\033[0m  $name is running. pid = $pid"
     else
         echo -e "\033[1;32m[N]\033[0m  $name isn't running."
+        exit 3
     fi
     ;;
 
