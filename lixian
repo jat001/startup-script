@@ -38,7 +38,7 @@ script=$(basename "$0")
 getPid() {
     ### Delete spaces, tabs and newlines.
     pid=$(cat $pidFile 2>/dev/null | tr -d ' \t\n')
-    ### `$pidFile` may be blank. If the progress exists, `! kill -0 $pid 2>/dev/null` will return 1.
+    ### `$pidFile` may be blank. If the process exists, `! kill -0 $pid 2>/dev/null` will return 1.
     if [ ! "$pid" ] || ! kill -0 $pid 2>/dev/null; then
         rm -f $pidFile
         unset pid
@@ -62,7 +62,7 @@ doStart() {
         exit 1
     fi
 
-    ### Successfully start the program if the progress exists after 5 seconds.
+    ### Successfully start the program if the process exists after 5 seconds.
     for (( i=0; i<=5; i++ )); do
         if kill -0 $pid 2>/dev/null; then
             echo -n '.'
@@ -85,7 +85,7 @@ doStop() {
         exit 1
     fi
 
-    ### Successfully stop the program if the progress doesn't exists in 10 seconds.
+    ### Successfully stop the program if the process doesn't exists in 10 seconds.
     for (( i=0; i<=10; i++ )); do
         if kill -0 $pid 2>/dev/null; then
             if [ "$i" = "10" ]; then
@@ -126,7 +126,7 @@ case "$1" in
     kill)
     getPid
     if [ "$pid" ]; then
-        echo -e "\033[1;36m[I]\033[0m  Forcefully killing the progress of $name..."
+        echo -e "\033[1;36m[I]\033[0m  Forcefully killing the process of $name..."
 
         if kill -9 $pid; then
             rm -f $pidFile

@@ -35,14 +35,14 @@ script=$(basename "$0")
 getPid() {
     ### Delete spaces, tabs and newlines.
     pid=$(cat $pidFile 2>/dev/null | tr -d ' \t\n')
-    ### `$pidFile` may be blank. If the progress exists, `! kill -0 $pid 2>/dev/null` will return 1.
+    ### `$pidFile` may be blank. If the process exists, `! kill -0 $pid 2>/dev/null` will return 1.
     if [ ! "$pid" ] || ! kill -0 $pid 2>/dev/null; then
         rm -f $pidFile
         unset pid
     fi
 }
 
-### Successfully start the application if the progress exists after 5 seconds.
+### Successfully start the application if the process exists after 5 seconds.
 doStart() {
     echo -en "\033[1;36m[I]\033[0m  Starting $name"
     ### apachectl is a script for running httpd, so we can't use its pid.
@@ -65,7 +65,7 @@ doStart() {
     echo -e "\n\033[1;32m[N]\033[0m  Start $name success."
 }
 
-### Successfully stop the program if the progress doesn't exists in 10 seconds.
+### Successfully stop the program if the process doesn't exists in 10 seconds.
 doStop() {
     echo -en "\033[1;36m[I]\033[0m  Gracefully stopping $name"
     if kill -WINCH $pid; then
