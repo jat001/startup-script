@@ -10,7 +10,7 @@
 # Description:       A tunnel proxy which help you get through firewalls.
 ### END INIT INFO
 
-PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin
+PATH=~/sbin:/usr/local/sbin:/usr/sbin:/sbin:~/bin:/usr/local/bin:/usr/bin:/bin
 export PATH
 
 if [ "$(id -u)" != "0" ]; then
@@ -18,18 +18,35 @@ if [ "$(id -u)" != "0" ]; then
     exit 4
 fi
 
-### Maybe you need to modify these variables.
+###############################################################
+########## Maybe you need to modify these variables. ##########
+
 name=sslocal
-### shadowsocks need python2 or node.js to run it.
+
+### shadowsocks need python 2 or node.js to run it.
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
-### Try use `which $name` to find the full path, or just use `$name` if the binary file is in `$PATH`.
+### Try using `which $name` to find the full path, or just use `$name` if the binary file is in `$PATH`.
 bin=/usr/local/bin/$name
+if [ ! -x "$bin" ]; then
+    echo -e "\033[1;31m[E]\033[0m  Can not find $bin, maybe the program isn't installed." >&2
+    exit 5
+fi
+
 ### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this variable to the new path.
 config=/etc/shadowsocks.json
+if [ ! -r "$config" ]; then
+    echo -e "\033[1;31m[E]\033[0m  The configuration file isn't found, maybe the path ($config) is wrong." >&2
+    exit 6
+fi
+
 ### In the most cases, the log file of programs are in `/var/log`. You are free to modify this variable.
 log=/var/log/shadowsocks.log
+
 ### By default, the pid file of programs are in `/var/run`. So you don't need to modify this variable.
 pidFile=/var/run/$name.pid
+
+##########                                           ##########
+###############################################################
 
 script=$(basename "$0")
 
@@ -37,7 +54,7 @@ getPid() {
     ### Delete spaces, tabs and newlines.
     pid=$(cat $pidFile 2>/dev/null | tr -d ' \t\n')
     ### `$pidFile` may be blank. If the process exists, `! kill -0 $pid 2>/dev/null` will return 1.
-    if [ ! "$pid" ] || ! kill -0 $pid 2>/dev/null; then
+    if [ -z "$pid" ] || ! kill -0 $pid 2>/dev/null; then
         rm -f $pidFile
         unset pid
     fi
@@ -100,7 +117,7 @@ case "$1" in
     start)
     getPid
     if [ "$pid" ]; then
-        echo -e "\033[1;33m[W]\033[0m  $name is already running. pid = $pid"
+        echo -e "\033[1;33m[W]\033[0m  $name is already running. pid = $pid" >&2
     else
         doStart
     fi
@@ -111,7 +128,7 @@ case "$1" in
     if [ "$pid" ]; then
         doStop
     else
-        echo -e "\033[1;33m[W]\033[0m  $name isn't running."
+        echo -e "\033[1;33m[W]\033[0m  $name isn't running." >&2
     fi
     ;;
 
@@ -128,19 +145,31 @@ case "$1" in
             exit 1
         fi
     else
-        echo -e "\033[1;33m[W]\033[0m  $name isn't running."
+        echo -e "\033[1;33m[W]\033[0m  $name isn't running." >&2
     fi
     ;;
 
     restart)
     getPid
     if [ "$pid" ]; then
-        echo -e "\033[1;36m[I]\033[0m  Restarting $name: "
+        echo -e "\033[1;36m[I]\033[0m  Restarting $name:"
         doStop
         doStart
     else
-        echo -e "\033[1;33m[W]\033[0m  $name isn't running"
+        echo -e "\033[1;33m[W]\033[0m  $name isn't running" >&2
         doStart
+    fi
+    ;;
+
+    force-reload)
+    getPid
+    if [ "$pid" ]; then
+        echo -e "\033[1;36m[I]\033[0m  Forcefully reloading (restarting) $name:"
+        doStop
+        doStart
+    else
+        echo -e "\033[1;31m[E]\033[0m  $name isn't running" >&2
+        exit 7
     fi
     ;;
 
@@ -155,7 +184,7 @@ case "$1" in
     ;;
 
     *)
-    echo "Usage: [sudo] $script {start|stop|kill|restart|status}." >&2
+    echo "Usage: [sudo] $script {start|stop|kill|restart|force-reload|status}." >&2
     exit 3
     ;;
 esac

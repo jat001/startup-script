@@ -10,7 +10,7 @@
 # Description:       A server monitor by alibaba.
 ### END INIT INFO
 
-PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin
+PATH=~/sbin:/usr/local/sbin:/usr/sbin:/sbin:~/bin:/usr/local/bin:/usr/bin:/bin
 export PATH
 
 if [ "$(id -u)" != "0" ]; then
@@ -18,16 +18,36 @@ if [ "$(id -u)" != "0" ]; then
     exit 4
 fi
 
-### Maybe you need to modify these variables.
+###############################################################
+########## Maybe you need to modify these variables. ##########
+
 name=cmsd
+
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
-### Try use `which $name` to find the full path, or just use `$name` if it is in `$PATH`.
+### Try using `which $name` to find the full path, or just use `$name` if it is in `$PATH`.
 bin=/usr/local/cms/bin/agent_cms
+if [ ! -x "$bin" ]; then
+    echo -e "\033[1;31m[E]\033[0m  Can not find $bin, maybe the program isn't installed." >&2
+    exit 5
+fi
+
 ### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this variable to the new path.
 config=/usr/local/cms/config/token.cfg
+if [ ! -r "$config" ]; then
+    echo -e "\033[1;31m[E]\033[0m  The configuration file isn't found, maybe the path ($config) is wrong." >&2
+    exit 6
+fi
 token=$(grep 'AGENT_TOKEN' $config | tr -d ' \t' | awk -F= '{print $2}' 2>/dev/null)
+if [ -z "$token" ];then
+    echo -e "\033[1;33m[W]\033[0m  Can not get the token from $config, will use anonymous mode." >&2
+    token="anonymous"
+fi
+
 ### By default, the pid file of programs are in `/var/run`. So you don't need to edit this variable.
 pidFile=/var/run/$name.pid
+
+##########                                           ##########
+###############################################################
 
 script=$(basename "$0")
 
@@ -36,7 +56,7 @@ getPid() {
     pid1=$(awk '{print $1}' $pidFile 2>/dev/null)
     pid2=$(awk '{print $2}' $pidFile 2>/dev/null)
     ### `$pidFile` may be blank. If the process exists, `! kill -0 $pid 2>/dev/null` will return 1.
-    if [[ ! "$pid1" && ! "$pid2" ]] || ! kill -0 $pid1 2>/dev/null && ! kill -0 $pid2 2>/dev/null; then
+    if [ -z "$pid1" ] && [ -z "$pid2" ] || ! kill -0 $pid1 2>/dev/null && ! kill -0 $pid2 2>/dev/null; then
         rm -f $pidFile
         unset pid1 pid2
     fi
@@ -52,9 +72,9 @@ doStart() {
         exit 1
     fi
 
-    until [[ "$pid1" && "$pid2" ]]; do
+    until [ "$pid1" ] && [ "$pid2" ]; do
         pids=$(pgrep -f $bin)
-        if [ ! "$pids" ]; then
+        if [ -z "$pids" ]; then
             echo -e "\n\033[1;31m[E]\033[0m  Start $name failed."
             exit 1
         fi
@@ -101,8 +121,8 @@ doStop() {
 case "$1" in
     start)
     getPid
-    if [[ "$pid1" && "$pid2" ]]; then
-        echo -e "\033[1;33m[W]\033[0m  $name is already running. pid1 = $pid1, pid2 = $pid2."
+    if [ "$pid1" ] && [ "$pid2" ]; then
+        echo -e "\033[1;33m[W]\033[0m  $name is already running. pid1 = $pid1, pid2 = $pid2." >&2
     else
         doStart
     fi
@@ -110,28 +130,40 @@ case "$1" in
 
     stop)
     getPid
-    if [[ "$pid1" && "$pid2" ]]; then
+    if [ "$pid1" ] && [ "$pid2" ]; then
         doStop
     else
-        echo -e "\033[1;33m[W]\033[0m  $name isn't running."
+        echo -e "\033[1;33m[W]\033[0m  $name isn't running." >&2
     fi
     ;;
 
     restart)
     getPid
-    if [[ "$pid1" && "$pid2" ]]; then
-        echo -e "\033[1;36m[I]\033[0m  Restarting $name: "
+    if [ "$pid1" ] && [ "$pid2" ]; then
+        echo -e "\033[1;36m[I]\033[0m  Restarting $name:"
         doStop
         doStart
     else
-        echo -e "\033[1;33m[W]\033[0m  $name isn't running"
+        echo -e "\033[1;33m[W]\033[0m  $name isn't running" >&2
         doStart
+    fi
+    ;;
+
+    force-reload)
+    getPid
+    if [ "$pid" ]; then
+        echo -e "\033[1;36m[I]\033[0m  Forcefully reloading (restarting) $name:"
+        doStop
+        doStart
+    else
+        echo -e "\033[1;31m[E]\033[0m  $name isn't running" >&2
+        exit 7
     fi
     ;;
 
     status)
     getPid
-    if [[ "$pid1" && "$pid2" ]]; then
+    if [ "$pid1" ] && [ "$pid2" ]; then
         echo -e "\033[1;32m[N]\033[0m  $name is running. pid1 = $pid1, pid2 = $pid2."
     else
         echo -e "\033[1;32m[N]\033[0m  $name isn't running."
@@ -140,7 +172,7 @@ case "$1" in
     ;;
 
     *)
-    echo "Usage: [sudo] $script {start|stop|restart|status}." >&2
+    echo "Usage: [sudo] $script {start|stop|restart|force-reload|status}." >&2
     exit 3
     ;;
 esac

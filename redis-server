@@ -10,7 +10,7 @@
 # Description:       Redis is an open-source, networked, in-memory, key-value data store with optional durability.
 ### END INIT INFO
 
-PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:~/bin
+PATH=~/sbin:/usr/local/sbin:/usr/sbin:/sbin:~/bin:/usr/local/bin:/usr/bin:/bin
 export PATH
 
 if [ "$(id -u)" != "0" ]; then
@@ -18,17 +18,33 @@ if [ "$(id -u)" != "0" ]; then
     exit 4
 fi
 
-### Maybe you need to modify these variables.
+###############################################################
+########## Maybe you need to modify these variables. ##########
+
 name=redis
+
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
-### Try use `which redis-server` and `which redis-cli` to find the full path, or just use `redis-server` and `redis-cli` if it is in `$PATH`.
+### Try using `which redis-server` and `which redis-cli` to find the full path, or just use `redis-server` and `redis-cli` if it is in `$PATH`.
 bin=/usr/local/redis/bin/redis-server
 cliBin=/usr/local/redis/bin/redis-cli
+if [ ! -x "$bin" ] || [ ! -x "$cliBin" ] ; then
+    echo -e "\033[1;31m[E]\033[0m  Can not find $bin or $cliBin, maybe the program isn't installed." >&2
+    exit 5
+fi
+
 ### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this variable to the new path.
 config=/home/www/etc/$name.conf
+if [ ! -r "$config" ]; then
+    echo -e "\033[1;31m[E]\033[0m  The configuration file isn't found, maybe the path ($config) is wrong." >&2
+    exit 6
+fi
+
 ### By default, the pid file of programs are in `/var/run`. So you don't need to edit this variable.
 ### But pay attention to `$name`, it may be different. You can find the path in the configuration file.
 pidFile=/var/run/$name.pid
+
+##########                                           ##########
+###############################################################
 
 script=$(basename "$0")
 
@@ -36,7 +52,7 @@ getPid() {
     ### Delete spaces, tabs and newlines.
     pid=$(cat $pidFile 2>/dev/null | tr -d ' \t\n')
     ### `$pidFile` may be blank. If the process exists, `! kill -0 $pid 2>/dev/null` will return 1.
-    if [ ! "$pid" ] || ! kill -0 $pid 2>/dev/null; then
+    if [ -z "$pid" ] || ! kill -0 $pid 2>/dev/null; then
         rm -f $pidFile
         unset pid
     fi
@@ -104,7 +120,7 @@ case "$1" in
     start)
     getPid
     if [ "$pid" ]; then
-        echo -e "\033[1;33m[W]\033[0m  $name is already running. pid = $pid"
+        echo -e "\033[1;33m[W]\033[0m  $name is already running. pid = $pid" >&2
     else
         doStart
     fi
@@ -115,19 +131,31 @@ case "$1" in
     if [ "$pid" ]; then
         doStop
     else
-        echo -e "\033[1;33m[W]\033[0m  $name isn't running."
+        echo -e "\033[1;33m[W]\033[0m  $name isn't running." >&2
     fi
     ;;
 
     restart)
     getPid
     if [ "$pid" ]; then
-        echo -e "\033[1;36m[I]\033[0m  Restarting $name: "
+        echo -e "\033[1;36m[I]\033[0m  Restarting $name:"
         doStop
         doStart
     else
-        echo -e "\033[1;33m[W]\033[0m  $name isn't running"
+        echo -e "\033[1;33m[W]\033[0m  $name isn't running" >&2
         doStart
+    fi
+    ;;
+
+    force-reload)
+    getPid
+    if [ "$pid" ]; then
+        echo -e "\033[1;36m[I]\033[0m  Forcefully reloading (restarting) $name:"
+        doStop
+        doStart
+    else
+        echo -e "\033[1;31m[E]\033[0m  $name isn't running" >&2
+        exit 7
     fi
     ;;
 
@@ -146,8 +174,8 @@ case "$1" in
     ### but you can use the `CONFIG SET` command which is used in order to reconfigure the server at run time without the need to restart Redis.
     ### See http://redis.io/commands/config-set.
     ### You also can't forcefully kill redis-server, it's not safe.
-#   echo "Usage: [sudo] $script {start|stop|kill|restart|reload|status}" >&2
-    echo "Usage: [sudo] $script {start|stop|restart|status}." >&2
+#   echo "Usage: [sudo] $script {start|stop|kill|restart|force-reload|reload|status}" >&2
+    echo "Usage: [sudo] $script {start|stop|restart|force-reload|status}." >&2
     exit 3
     ;;
 esac
