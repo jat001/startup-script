@@ -27,7 +27,7 @@ name=goagent
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
 ### Try using `which $name` to find the full path, or just use `$name` if the binary file is in `$PATH`.
 python27=$(which python2.7)
-if [ ! -x "$python2" ]; then
+if [ ! -x "$python27" ]; then
     echo -e "\033[1;31m[E]\033[0m  Can not find python, Try using 'which python2' or 'which python' to find it." >&2
     exit 5
 fi
@@ -62,7 +62,7 @@ getPid() {
 
 doStart() {
     echo -en "\033[1;36m[I]\033[0m  Starting $name"
-    if cd $(dirname $app) && nohup $python2 $app >> "$log" 2>&1 & then
+    if cd $(dirname $app) && nohup $python27 $app >> "$log" 2>&1 & then
         echo -n '.'
         pid=$!
         echo -n $pid > $pidFile

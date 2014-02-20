@@ -27,7 +27,7 @@ name=lixian
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
 ### Try using `which $name` to find the full path, or just use `$name` if the binary file is in `$PATH`.
 python27=$(which python2.7)
-if [ ! -x "$python2" ]; then
+if [ ! -x "$python27" ]; then
     echo -e "\033[1;31m[E]\033[0m  Can not find python, Try using 'which python2' or 'which python' to find it." >&2
     exit 5
 fi
@@ -75,7 +75,7 @@ doStart() {
     fi
     ### I don't want it to run as root. But the program may be doesn't have permissions to create the log file or the database file.
     ### So you need to create them manually, and change owner & group. You can find the paths in the configuration file.
-    if su lixian -s /bin/bash -c "nohup $python2 $app --f="$config" >> "$log" 2>&1 &" 2>/dev/null; then
+    if su lixian -s /bin/bash -c "nohup $python27 $app --f="$config" >> "$log" 2>&1 &" 2>/dev/null; then
         echo -n '.'
         pid=$(pgrep -f $app)
         echo -n $pid > $pidFile
