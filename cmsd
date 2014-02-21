@@ -18,10 +18,10 @@ if [ "$(id -u)" != "0" ]; then
     exit 4
 fi
 
+name=cmsd
+
 ###############################################################
 ########## Maybe you need to modify these variables. ##########
-
-name=cmsd
 
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
 ### Try using `which $name` to find the full path, or just use `$name` if it is in `$PATH`.

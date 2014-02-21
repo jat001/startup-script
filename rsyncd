@@ -18,10 +18,10 @@ if [ "$(id -u)" != "0" ]; then
     exit 4
 fi
 
+name=rsyncd
+
 ###############################################################
 ########## Maybe you need to modify these variables. ##########
-
-name=rsyncd
 
 ### rsync is built-in in most of linux distribution.
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.

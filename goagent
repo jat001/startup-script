@@ -18,10 +18,10 @@ if [ "$(id -u)" != "0" ]; then
     exit 4
 fi
 
+name=goagent
+
 ###############################################################
 ########## Maybe you need to modify these variables. ##########
-
-name=goagent
 
 ### goagent need python 2 to run it.
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.

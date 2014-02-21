@@ -18,10 +18,10 @@ if [ "$(id -u)" != "0" ]; then
     exit 4
 fi
 
+name=lixian
+
 ###############################################################
 ########## Maybe you need to modify these variables. ##########
-
-name=lixian
 
 ### lixian need python 2 to run it.
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.

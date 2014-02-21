@@ -18,10 +18,10 @@ if [ "$(id -u)" != "0" ]; then
     exit 4
 fi
 
+name=redis
+
 ###############################################################
 ########## Maybe you need to modify these variables. ##########
-
-name=redis
 
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
 ### Try using `which redis-server` and `which redis-cli` to find the full path, or just use `redis-server` and `redis-cli` if it is in `$PATH`.

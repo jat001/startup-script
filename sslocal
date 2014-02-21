@@ -18,10 +18,10 @@ if [ "$(id -u)" != "0" ]; then
     exit 4
 fi
 
+name=sslocal
+
 ###############################################################
 ########## Maybe you need to modify these variables. ##########
-
-name=sslocal
 
 ### shadowsocks need python 2 or node.js to run it.
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.

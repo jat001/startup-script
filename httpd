@@ -18,10 +18,10 @@ if [ "$(id -u)" != "0" ]; then
     exit 4
 fi
 
+name=httpd
+
 ###############################################################
 ########## Maybe you need to modify these variables. ##########
-
-name=httpd
 
 ### The recommended method of invoking the httpd executable is to use the apachectl control script.
 ### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
