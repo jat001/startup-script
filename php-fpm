@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 ### BEGIN INIT INFO
 # Provides:          php-fpm
@@ -10,7 +10,7 @@
 # Description:       PHP-FPM (FastCGI Process Manager) is an alternative PHP FastCGI implementation with some additional features useful for sites of any size, especially busier sites.
 ### END INIT INFO
 
-PATH=~/sbin:/usr/local/sbin:/usr/sbin:/sbin:~/bin:/usr/local/bin:/usr/bin:/bin
+PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin
 export PATH
 
 if [ "$(id -u)" != "0" ]; then
@@ -23,7 +23,7 @@ name=php-fpm
 ###############################################################
 ########## Maybe you need to modify these variables. ##########
 
-### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
+### In the most cases, the binary file of program is in `/usr/bin` or `/usr/local/bin`.
 ### Try using `which $name` to find the full path, or just use `$name` if it is in `$PATH`.
 bin=/usr/local/php/sbin/$name
 if [ ! -x "$bin" ]; then
@@ -31,7 +31,7 @@ if [ ! -x "$bin" ]; then
     exit 5
 fi
 
-### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this variable to the new path.
+### In the most cases, the configuration file of program is in `/etc`. You can create your own configuration file and edit this variable to the new path.
 config=/home/www/etc/php/$name.conf
 ini=/home/www/etc/php/php.ini
 if [ ! -r "$config" ] || [ ! -r "$ini" ]; then
@@ -39,7 +39,7 @@ if [ ! -r "$config" ] || [ ! -r "$ini" ]; then
     exit 6
 fi
 
-### By default, the pid file of programs are in `/var/run`. So you don't need to edit this variable. You can find the path in the configuration file.
+### By default, the pid file of program is in `/var/run`. So you don't need to edit this variable. You can find the path in the configuration file.
 pidFile=/var/run/$name.pid
 
 ##########                                           ##########

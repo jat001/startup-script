@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 ### BEGIN INIT INFO
 # Provides:          goagent
@@ -10,7 +10,7 @@
 # Description:       A gae proxy forked from gappproxy/wallproxy.
 ### END INIT INFO
 
-PATH=~/sbin:/usr/local/sbin:/usr/sbin:/sbin:~/bin:/usr/local/bin:/usr/bin:/bin
+PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin
 export PATH
 
 if [ "$(id -u)" != "0" ]; then
@@ -24,7 +24,7 @@ name=goagent
 ########## Maybe you need to modify these variables. ##########
 
 ### goagent need python 2 to run it.
-### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
+### In the most cases, the binary file of program is in `/usr/bin` or `/usr/local/bin`.
 ### Try using `which $name` to find the full path, or just use `$name` if the binary file is in `$PATH`.
 python27=$(which python2.7)
 if [ ! -x "$python27" ]; then
@@ -39,10 +39,10 @@ if [ ! -r "$app" ]; then
     exit 5
 fi
 
-### In the most cases, the log file of programs are in `/var/log`. You are free to modify this variable.
+### In the most cases, the log file of program is in `/var/log`. You are free to modify this variable.
 log=/var/log/$name.log
 
-### By default, the pid file of programs are in `/var/run`. So you don't need to modify this variable.
+### By default, the pid file of program is in `/var/run`. So you don't need to modify this variable.
 pidFile=/var/run/$name.pid
 
 ##########                                           ##########

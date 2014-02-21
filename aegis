@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 ### BEGIN INIT INFO
 # Provides:          aegis
@@ -10,7 +10,7 @@
 # Description:       A security and defense service by alibaba.
 ### END INIT INFO
 
-PATH=~/sbin:/usr/local/sbin:/usr/sbin:/sbin:~/bin:/usr/local/bin:/usr/bin:/bin
+PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin
 export PATH
 
 if [ "$(id -u)" != "0" ]; then
@@ -23,7 +23,7 @@ name=aegis
 ###############################################################
 ########## Maybe you need to modify these variables. ##########
 
-### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
+### In the most cases, the binary file of program is in `/usr/bin` or `/usr/local/bin`.
 ### Try using `which $name` to find the full path, or just use `$name` if it is in `$PATH`.
 bin=/usr/local/aegis/aegis_update/aegis_update
 if [ ! -x "$bin" ]; then
@@ -31,14 +31,14 @@ if [ ! -x "$bin" ]; then
     exit 5
 fi
 
-### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this variable to the new path.
+### In the most cases, the configuration file of program is in `/etc`. You can create your own configuration file and edit this variable to the new path.
 config=/usr/local/aegis/aegis_update/agx_update.cfg
 if [ ! -r "$config" ]; then
     echo -e "\033[1;31m[E]\033[0m  The configuration file isn't found, maybe the path ($config) is wrong." >&2
     exit 6
 fi
 
-### By default, the pid file of programs are in `/var/run`. So you don't need to edit this variable.
+### By default, the pid file of program is in `/var/run`. So you don't need to edit this variable.
 pidFile=/usr/local/aegis/aegis_update/pid.txt
 
 ##########                                           ##########

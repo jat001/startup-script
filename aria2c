@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 ### BEGIN INIT INFO
 # Provides:          aria2c
@@ -10,7 +10,7 @@
 # Description:       aria2 is a lightweight multi-protocol & multi-source command-line download utility.
 ### END INIT INFO
 
-PATH=~/sbin:/usr/local/sbin:/usr/sbin:/sbin:~/bin:/usr/local/bin:/usr/bin:/bin
+PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin
 export PATH
 
 if [ "$(id -u)" != "0" ]; then
@@ -23,7 +23,7 @@ name=aria2c
 ###############################################################
 ########## Maybe you need to modify these variables. ##########
 
-### In the most cases, the binary file of programs are in `/usr/bin` or `/usr/local/bin`.
+### In the most cases, the binary file of program is in `/usr/bin` or `/usr/local/bin`.
 ### Try using `which $name` to find the full path, or just use `$name` if the binary file is in `$PATH`.
 bin=/usr/bin/$name
 if [ ! -x "$bin" ]; then
@@ -31,17 +31,17 @@ if [ ! -x "$bin" ]; then
     exit 5
 fi
 
-### In the most cases, the configuration file of programs are in `/etc`. You can create your own configuration file and edit this variable to the new path.
+### In the most cases, the configuration file of program is in `/etc`. You can create your own configuration file and edit this variable to the new path.
 config=/etc/aria2.conf
 if [ ! -r "$config" ]; then
     echo -e "\033[1;31m[E]\033[0m  The configuration file isn't found, maybe the path ($config) is wrong." >&2
     exit 6
 fi
 
-### In the most cases, the log file of programs are in `/var/log`. You can find the path in the configuration file.
+### In the most cases, the log file of program is in `/var/log`. You can find the path in the configuration file.
 log=/var/log/aria2.log
 
-### By default, the pid file of programs are in `/var/run`. So you don't need to edit this variable.
+### By default, the pid file of program is in `/var/run`. So you don't need to edit this variable.
 pidFile=/var/run/$name.pid
 
 ##########                                           ##########
