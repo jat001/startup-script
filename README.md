@@ -13,7 +13,7 @@ Don't forget change the file permissions to 755 (`-rwxr-xr-x`), change the owner
 
 Maybe you also need to modify the program path, the configuration file path, the log file path or the pid file path.
 
-In Some Linux distributions (such as Debian, Ubuntu, Fedora, etc), they use tmpfs to mount `/run` temporarily. You must change the directory permissions to 777 (`drwxrwxrwx`) at system startup, to make the program doesn't run as root, has permissions to create a pid file in `/var/run`.
+In some Linux distributions (such as Debian, Ubuntu, Fedora, etc), they use tmpfs to mount `/run` temporarily. You must change the directory permissions to 777 (`drwxrwxrwx`) at system startup, to make the program doesn't run as root, has permissions to create a pid file in `/var/run`.
 
 For example, add `chmod 777 /run` to `/etc/init/mounted-run.conf`:
 
