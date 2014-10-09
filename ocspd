@@ -48,7 +48,7 @@ script=$(basename "$0")
 
 getPid() {
     ### `\d` doesn't work here.
-    pidFiles=($(find $pidFolder -regex "$pidFolder/$name\.[0-9]+\.pid"))
+    pidFiles=($(find $pidFolder -regex "$pidFolder/$name\.[0-9]+\.pid" 2>/dev/null))
     pidFilesNum=${#pidFiles[@]}
     ### Maybe $pidFilesNum = 0.
     unset pids
