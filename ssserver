@@ -33,14 +33,14 @@ if [ ! -x "$bin" ]; then
 fi
 
 ### In the most cases, the configuration file of program is in `/etc`. You can create your own configuration file and edit this variable to the new path.
-config=/home/www/etc/shadowsocks.json
+config=/data/etc/shadowsocks.json
 if [ ! -r "$config" ]; then
     echo -e "\033[1;31m[E]\033[0m  The configuration file isn't found, maybe the path ($config) is wrong." >&2
     exit 6
 fi
 
 ### In the most cases, the log file of program is in `/var/log`. You are free to modify this variable.
-log=/home/www/log/shadowsocks.log
+log=/data/log/shadowsocks.log
 
 ### By default, the pid file of program is in `/var/run`. So you don't need to modify this variable.
 pidFile=/var/run/$name.pid
@@ -78,6 +78,8 @@ doStart() {
             sleep 1
         else
             rm -f $pidFile
+            ### Just for restart.
+            unset pid
             echo -e "\n\033[1;31m[E]\033[0m  Start $name failed."
             exit 1
         fi

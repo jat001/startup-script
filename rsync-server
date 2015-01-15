@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ### BEGIN INIT INFO
-# Provides:          rsyncd
+# Provides:          rsync-server
 # Required-Start:    $local_fs $network $named $remote_fs $syslog
 # Required-Stop:     $local_fs $network $named $remote_fs $syslog
 # Default-Start:     2 3 4 5
@@ -33,7 +33,7 @@ if [ ! -x "$bin" ]; then
 fi
 
 ### In the most cases, the configuration file of program is in `/etc`. You can create your own configuration file and edit this variable to the new path.
-config=/home/www/etc/rsync/$name.conf
+config=/data/etc/rsync/$name.conf
 if [ ! -r "$config" ]; then
     echo -e "\033[1;31m[E]\033[0m  The configuration file isn't found, maybe the path ($config) is wrong." >&2
     exit 6
@@ -69,7 +69,7 @@ doStart() {
     fi
 
     ### Successfully start the program if the process exists after 5 seconds.
-    for (( i=0; i<5; i++ )); do
+    for (( i=0; i<=5; i++ )); do
         if kill -0 $pid 2>/dev/null; then
             echo -n '.'
             sleep 1
@@ -92,11 +92,13 @@ doStop() {
     fi
 
     ### Successfully stop the program if the process doesn't exists in 10 seconds.
-    for (( i=0; i<10; i++ )); do
+    for (( i=0; i<=10; i++ )); do
         if kill -0 $pid 2>/dev/null; then
             echo -n '.'
             sleep 1
         else
+            ### Just for restart.
+            unset pid
             echo -e "\n\033[1;32m[N]\033[0m  Stop $name success."
             return 0
         fi
