@@ -1,13 +1,13 @@
 #!/bin/bash
 
 ### BEGIN INIT INFO
-# Provides:          rsync-server
-# Required-Start:    $local_fs $network $named $remote_fs $syslog
-# Required-Stop:     $local_fs $network $named $remote_fs $syslog
+# Provides:          hhvm
+# Required-Start:    $local_fs $network $named $remote_fs $syslog mysqld
+# Required-Stop:     $local_fs $network $named $remote_fs $syslog mysqld
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: rsync daemon
-# Description:       rsync is an open source utility that provides fast incremental file transfer.
+# Short-Description: hhvm daemon
+# Description:       HipHop Virtual Machine is an open-source virtual machine designed for executing programs written in Hack and PHP.
 ### END INIT INFO
 
 PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin
@@ -18,30 +18,34 @@ if [ "$(id -u)" != "0" ]; then
     exit 4
 fi
 
-name=rsyncd
+name=hhvm
 
 ###############################################################
 ########## Maybe you need to modify these variables. ##########
 
-### rsync is built-in in most of linux distribution.
 ### In the most cases, the binary file of program is in `/usr/bin` or `/usr/local/bin`.
 ### Try using `which $name` to find the full path, or just use `$name` if the binary file is in `$PATH`.
-bin=$(which rsync)
+bin=/usr/local/bin/$name
 if [ ! -x "$bin" ]; then
-    echo -e "\033[1;31m[E]\033[0m  Can not find rsync, maybe the program isn't installed." >&2
+    echo -e "\033[1;31m[E]\033[0m  Can not find $bin, maybe the program isn't installed." >&2
     exit 5
 fi
 
 ### In the most cases, the configuration file of program is in `/etc`. You can create your own configuration file and edit this variable to the new path.
-config=/data/etc/rsync/$name.conf
+config=/data/etc/php/php.ini
 if [ ! -r "$config" ]; then
     echo -e "\033[1;31m[E]\033[0m  The configuration file isn't found, maybe the path ($config) is wrong." >&2
     exit 6
 fi
 
-### By default, the pid file of program is in `/var/run`. So you don't need to edit this variable.
-### But pay attention to `$name`, it may be different. You can find the path in the configuration file.
+### In the most cases, the log file of program is in `/var/log`. You are free to modify this variable.
+log=/data/log/php/$name.log
+
+### By default, the pid file of program is in `/var/run`. So you don't need to modify this variable.
 pidFile=/var/run/$name.pid
+
+### By default, the socket file of program is in `/tmp`. So you don't need to modify this variable.
+socketFile=/tmp/$name.sock
 
 ##########                                           ##########
 ###############################################################
@@ -53,15 +57,23 @@ getPid() {
     pid=$(cat $pidFile 2>/dev/null | tr -d ' \t\n')
     ### `$pidFile` may be blank. If the process exists, `! kill -0 $pid 2>/dev/null` will return 1.
     if [ -z "$pid" ] || ! kill -0 $pid 2>/dev/null; then
-        rm -f $pidFile
+        ### hhvm won't remove the pid file and the socket file when it crashed.
+        rm -f $pidFile $socketFile
         unset pid
     fi
 }
 
 doStart() {
     echo -en "\033[1;36m[I]\033[0m  Starting $name"
-    if $bin --daemon --config="$config"; then
+    if [ ! -f "$log" ]; then
+        touch "$log"
+        chown www:www "$log"
+    fi
+    ### I don't want it to run as root. But the program may be doesn't have permissions to create the log file.
+    ### So you need to create them manually, and change owner & group. You can find the path in the configuration file.
+    if su www -s /bin/bash -c "$bin -c '$config' -m daemon" 2>/dev/null; then
         echo -n '.'
+        sleep 1
         getPid
     else
         echo -e "\n\033[1;31m[E]\033[0m  Start $name error."
@@ -78,9 +90,12 @@ doStart() {
             exit 1
         fi
     done
+
+    ### The default permission of the socket file is 600.
+    chmod 666 $socketFile
+
     echo -e "\n\033[1;32m[N]\033[0m  Start $name success."
 }
-
 
 doStop() {
     echo -en "\033[1;36m[I]\033[0m  Stopping $name"

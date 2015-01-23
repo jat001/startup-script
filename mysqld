@@ -69,6 +69,7 @@ doStart() {
         exit 1
     fi
 
+    unset pid
     until [ "$pid" ]; do
         if kill -0 $scriptPid 2>/dev/null; then
             pid=$(cat $pidFile 2>/dev/null | tr -d ' \t\n')
@@ -99,8 +100,6 @@ doStop() {
             echo -n '.'
             sleep 1
         else
-            ### Just for restart.
-            unset pid
             echo -e "\n\033[1;32m[N]\033[0m  Stop $name success."
             return 0
         fi

@@ -75,13 +75,12 @@ doStart() {
     ### So you need to create them manually, and change owner & group. You can find the paths in the configuration file.
     if su thin -s /bin/bash -c "$bin start -C $config > /dev/null 2>&1"; then
         echo -n '.'
+        getPid
+        echo -n '.'
     else
         echo -e "\n\033[1;31m[E]\033[0m  Start $name error."
         exit 1
     fi
-
-    getPid
-    echo -n '.'
 
     if [ "$pidsNum" = "0" ]; then
         echo -e "\n\033[1;31m[E]\033[0m  Start $name failed."

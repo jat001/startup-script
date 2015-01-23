@@ -78,8 +78,6 @@ doStart() {
             sleep 1
         else
             rm -f $pidFile
-            ### Just for restart.
-            unset pid
             echo -e "\n\033[1;31m[E]\033[0m  Start $name failed."
             exit 1
         fi

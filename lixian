@@ -75,7 +75,7 @@ doStart() {
     fi
     ### I don't want it to run as root. But the program may be doesn't have permissions to create the log file or the database file.
     ### So you need to create them manually, and change owner & group. You can find the paths in the configuration file.
-    if su lixian -s /bin/bash -c "nohup $python27 $app --f="$config" >> "$log" 2>&1 &" 2>/dev/null; then
+    if su lixian -s /bin/bash -c "nohup $python27 $app --f='$config' >> '$log' 2>&1 &" 2>/dev/null; then
         echo -n '.'
         pid=$(pgrep -f $app)
         echo -n $pid > $pidFile
@@ -114,8 +114,6 @@ doStop() {
             sleep 1
         else
             rm -f $pidFile
-            ### Just for restart.
-            unset pid
             echo -e "\n\033[1;32m[N]\033[0m  Stop $name success."
             return 0
         fi
