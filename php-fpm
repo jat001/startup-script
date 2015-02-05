@@ -24,7 +24,7 @@ name=php-fpm
 ########## Maybe you need to modify these variables. ##########
 
 ### In the most cases, the binary file of program is in `/usr/bin` or `/usr/local/bin`.
-### Try using `which $name` to find the full path, or just use `$name` if it is in `$PATH`.
+### Try using `which php-fpm` to find the full path, or just use `$name` if it is in `$PATH`.
 bin=/usr/local/php/sbin/$name
 if [ ! -x "$bin" ]; then
     echo -e "\033[1;31m[E]\033[0m  Can not find $bin, maybe the program isn't installed." >&2
@@ -51,7 +51,7 @@ getPid() {
     ### Delete spaces, tabs and newlines.
     pid=$(cat $pidFile 2>/dev/null | tr -d ' \t\n')
     ### `$pidFile` may be blank. If the process exists, `! kill -0 $pid 2>/dev/null` will return 1.
-    if [ -z "$pid" ] || ! kill -0 $pid 2>/dev/null; then
+    if [ -z $pid ] || ! kill -0 $pid 2>/dev/null; then
         rm -f $pidFile
         unset pid
     fi
@@ -60,7 +60,7 @@ getPid() {
 doStart() {
     echo -en "\033[1;36m[I]\033[0m  Starting $name"
     ### Block zend version notice.
-    if $bin -c "$ini" -y "$config" > /dev/null 2>&1; then
+    if $bin -c "$ini" -y "$config"; then
         echo -n '.'
         getPid
     else
@@ -108,7 +108,7 @@ doStop() {
 case "$1" in
     start)
     getPid
-    if [ "$pid" ]; then
+    if [ $pid ]; then
         echo -e "\033[1;33m[W]\033[0m  $name is already running. pid = $pid"
     else
         doStart
@@ -117,7 +117,7 @@ case "$1" in
 
     stop)
     getPid
-    if [ "$pid" ]; then
+    if [ $pid ]; then
         doStop
     else
         echo -e "\033[1;33m[W]\033[0m  $name isn't running."
@@ -126,7 +126,7 @@ case "$1" in
 
     kill)
     getPid
-    if [ "$pid" ]; then
+    if [ $pid ]; then
         echo -e "\033[1;36m[I]\033[0m  Fast shutdown $name..."
 
         if kill -TERM $pid; then
@@ -142,7 +142,7 @@ case "$1" in
 
     restart)
     getPid
-    if [ "$pid" ]; then
+    if [ $pid ]; then
         echo -e "\033[1;36m[I]\033[0m  Restarting $name:"
         doStop
         doStart
@@ -154,7 +154,7 @@ case "$1" in
 
     reload)
     getPid
-    if [ "$pid" ]; then
+    if [ $pid ]; then
         echo -e "\033[1;36m[I]\033[0m  Reloading $name configuration file..."
 
         if kill -USR2 $pid; then
@@ -171,7 +171,7 @@ case "$1" in
 
     force-reload)
     getPid
-    if [ "$pid" ]; then
+    if [ $pid ]; then
         echo -e "\033[1;36m[I]\033[0m  Forcefully reloading (restarting) $name:"
         doStop
         doStart
@@ -183,7 +183,7 @@ case "$1" in
 
     status)
     getPid
-    if [ "$pid" ]; then
+    if [ $pid ]; then
         echo -e "\033[1;32m[N]\033[0m  $name is running. pid = $pid"
     else
         echo -e "\033[1;32m[N]\033[0m  $name isn't running."

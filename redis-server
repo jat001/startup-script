@@ -52,7 +52,7 @@ getPid() {
     ### Delete spaces, tabs and newlines.
     pid=$(cat $pidFile 2>/dev/null | tr -d ' \t\n')
     ### `$pidFile` may be blank. If the process exists, `! kill -0 $pid 2>/dev/null` will return 1.
-    if [ -z "$pid" ] || ! kill -0 $pid 2>/dev/null; then
+    if [ -z $pid ] || ! kill -0 $pid 2>/dev/null; then
         rm -f $pidFile
         unset pid
     fi
@@ -62,7 +62,7 @@ doStart() {
     echo -en "\033[1;36m[I]\033[0m  Starting $name"
     ### I don't want it to run as root. But the program may be doesn't have permissions to create the log file or the database directory.
     ### So you need to create them manually, and change owner & group. You can find the paths in the configuration file.
-    if su redis -s /bin/bash -c "$bin '$config'" 2>/dev/null; then
+    if su redis -s /bin/bash -c "$bin '$config'"; then
         echo -n '.'
         sleep 1
         getPid
@@ -111,7 +111,7 @@ doStop() {
 case "$1" in
     start)
     getPid
-    if [ "$pid" ]; then
+    if [ $pid ]; then
         echo -e "\033[1;33m[W]\033[0m  $name is already running. pid = $pid"
     else
         doStart
@@ -120,7 +120,7 @@ case "$1" in
 
     stop)
     getPid
-    if [ "$pid" ]; then
+    if [ $pid ]; then
         doStop
     else
         echo -e "\033[1;33m[W]\033[0m  $name isn't running."
@@ -129,7 +129,7 @@ case "$1" in
 
     restart)
     getPid
-    if [ "$pid" ]; then
+    if [ $pid ]; then
         echo -e "\033[1;36m[I]\033[0m  Restarting $name:"
         doStop
         doStart
@@ -141,7 +141,7 @@ case "$1" in
 
     force-reload)
     getPid
-    if [ "$pid" ]; then
+    if [ $pid ]; then
         echo -e "\033[1;36m[I]\033[0m  Forcefully reloading (restarting) $name:"
         doStop
         doStart
@@ -153,7 +153,7 @@ case "$1" in
 
     status)
     getPid
-    if [ "$pid" ]; then
+    if [ $pid ]; then
         echo -e "\033[1;32m[N]\033[0m  $name is running. pid = $pid"
     else
         echo -e "\033[1;32m[N]\033[0m  $name isn't running."

@@ -73,7 +73,7 @@ doStart() {
     chown thin:thin /tmp/thin
     ### I don't want it to run as root. But the program may be doesn't have permissions to create the log files or the socket files.
     ### So you need to create them manually, and change owner & group. You can find the paths in the configuration file.
-    if su thin -s /bin/bash -c "$bin start -C $config > /dev/null 2>&1"; then
+    if su thin -s /bin/bash -c "$bin start -C $config"; then
         echo -n '.'
         getPid
         echo -n '.'
@@ -91,7 +91,7 @@ doStart() {
 
 doStop() {
     echo -en "\033[1;36m[I]\033[0m  Stopping $name."
-    if su thin -s /bin/bash -c "$bin stop -C $config > /dev/null 2>&1"; then
+    if su thin -s /bin/bash -c "$bin stop -C $config"; then
         echo -n '.'
     else
         echo -e "\n\033[1;31m[E]\033[0m  Stop $name error."

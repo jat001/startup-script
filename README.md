@@ -45,6 +45,10 @@ script
 end script
 ```
 
+### WARNING
+
+Some init scripts may in conflict with the software own scripts. Such as rsync-server and rsync, munin-server and munin munin-node. **Do NOT use them together**！
+
 ### See also
 
 [The Guidelines for SysV-style Initscripts](https://en.opensuse.org/openSUSE:Packaging_init_scripts)
@@ -96,6 +100,10 @@ script
     #[ -d "/etc/update-motd.d" ] && run-parts --lsbsysinit /etc/update-motd.d > /run/motd &
 end script
 ```
+
+### 注意
+
+部分启动脚本可能与软件自带脚本冲突，如 rsync-server 和 rsync，munin-server 和 munin、munin-node，**请勿同时使用**！
 
 ### 参见
 

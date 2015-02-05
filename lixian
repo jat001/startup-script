@@ -25,7 +25,7 @@ name=lixian
 
 ### lixian need python 2 to run it.
 ### In the most cases, the binary file of program is in `/usr/bin` or `/usr/local/bin`.
-### Try using `which $name` to find the full path, or just use `$name` if the binary file is in `$PATH`.
+### Try using `which python2.7` to find the full path, or just use `$name` if the binary file is in `$PATH`.
 python27=$(which python2.7)
 if [ ! -x "$python27" ]; then
     echo -e "\033[1;31m[E]\033[0m  Can not find python, Try using 'which python2' or 'which python' to find it." >&2
@@ -61,7 +61,7 @@ getPid() {
     ### Delete spaces, tabs and newlines.
     pid=$(cat $pidFile 2>/dev/null | tr -d ' \t\n')
     ### `$pidFile` may be blank. If the process exists, `! kill -0 $pid 2>/dev/null` will return 1.
-    if [ -z "$pid" ] || ! kill -0 $pid 2>/dev/null; then
+    if [ -z $pid ] || ! kill -0 $pid 2>/dev/null; then
         rm -f $pidFile
         unset pid
     fi
@@ -75,7 +75,7 @@ doStart() {
     fi
     ### I don't want it to run as root. But the program may be doesn't have permissions to create the log file or the database file.
     ### So you need to create them manually, and change owner & group. You can find the paths in the configuration file.
-    if su lixian -s /bin/bash -c "nohup $python27 $app --f='$config' >> '$log' 2>&1 &" 2>/dev/null; then
+    if su lixian -s /bin/bash -c "nohup $python27 $app --f='$config' >> '$log' 2>&1 &"; then
         echo -n '.'
         pid=$(pgrep -f $app)
         echo -n $pid > $pidFile
@@ -126,7 +126,7 @@ doStop() {
 case "$1" in
     start)
     getPid
-    if [ "$pid" ]; then
+    if [ $pid ]; then
         echo -e "\033[1;33m[W]\033[0m  $name is already running. pid = $pid"
     else
         doStart
@@ -135,7 +135,7 @@ case "$1" in
 
     stop)
     getPid
-    if [ "$pid" ]; then
+    if [ $pid ]; then
         doStop
     else
         echo -e "\033[1;33m[W]\033[0m  $name isn't running."
@@ -144,7 +144,7 @@ case "$1" in
 
     kill)
     getPid
-    if [ "$pid" ]; then
+    if [ $pid ]; then
         echo -e "\033[1;36m[I]\033[0m  Forcefully killing the process of $name..."
 
         if kill -9 $pid; then
@@ -161,7 +161,7 @@ case "$1" in
 
     restart)
     getPid
-    if [ "$pid" ]; then
+    if [ $pid ]; then
         echo -e "\033[1;36m[I]\033[0m  Restarting $name:"
         doStop
         doStart
@@ -173,7 +173,7 @@ case "$1" in
 
     force-reload)
     getPid
-    if [ "$pid" ]; then
+    if [ $pid ]; then
         echo -e "\033[1;36m[I]\033[0m  Forcefully reloading (restarting) $name:"
         doStop
         doStart
@@ -185,7 +185,7 @@ case "$1" in
 
     status)
     getPid
-    if [ "$pid" ]; then
+    if [ $pid ]; then
         echo -e "\033[1;32m[N]\033[0m  $name is running. pid = $pid"
     else
         echo -e "\033[1;32m[N]\033[0m  $name isn't running."
