@@ -130,10 +130,14 @@ doStart() {
         exit 1
     fi
 
+    chmod 666 $cgiGraphSocketFile
+
     if ! $spawnFcgi -F $cgiForkChildrenNum -s $cgiHtmlSocketFile -u munin -g munin -U munin -G munin -P $cgiHtmlPidFile $cgiHtml; then
         echo -e "\n\033[1;31m[E]\033[0m  Start munin-cgi-html error."
         exit 1
     fi
+
+    chmod 666 $cgiHtmlSocketFile
 
     echo -n '.'
     getPid
