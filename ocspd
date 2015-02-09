@@ -13,7 +13,7 @@
 PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin
 export PATH
 
-if [ "$(id -u)" != "0" ]; then
+if [ $(id -u) -ne 0 ]; then
     echo -e "\033[1;31m[E]\033[0m  You must have root permissions for run this script, please use sudo and try again." >&2
     exit 4
 fi
@@ -50,14 +50,14 @@ getPid() {
     ### `\d` doesn't work here.
     pidFiles=($(find $pidFolder -regex "$pidFolder/$name\.[0-9]+\.pid" 2>/dev/null))
     pidFilesNum=${#pidFiles[@]}
-    ### Maybe $pidFilesNum = 0.
+
     unset pids
     for (( i=0; i<$pidFilesNum; i++ )); do
         ### `${pidFiles[i]}` may be blank.
         pids[i]=$(cat ${pidFiles[i]} 2>/dev/null | tr -d ' \t\n')
         ### If the process exists, `kill -0 ${pids[i]} 2>/dev/null` will return 0.
         if [ "${pids[i]}" ] && kill -0 ${pids[i]} 2>/dev/null; then
-            output+="pid$i = ${pids[i]} "
+            output+=" pid$i = ${pids[i]}"
         else
             rm -f ${pidFiles[i]}
             unset pids[i]
@@ -68,97 +68,101 @@ getPid() {
 
 doStart() {
     echo -en "\033[1;36m[I]\033[0m  Starting $name."
-    ### thin doesn't create this folder automatically.
-    mkdir -p /tmp/thin
-    chown thin:thin /tmp/thin
+
+    if [ ! -d /tmp/thin ]; then
+        mkdir -p /tmp/thin
+        chown -R thin:thin /tmp/thin
+    fi
+
     ### I don't want it to run as root. But the program may be doesn't have permissions to create the log files or the socket files.
     ### So you need to create them manually, and change owner & group. You can find the paths in the configuration file.
-    if su thin -s /bin/bash -c "$bin start -C $config"; then
-        echo -n '.'
-        getPid
-        echo -n '.'
-    else
+    if ! su thin -s /bin/bash -c "$bin start -C $config"; then
         echo -e "\n\033[1;31m[E]\033[0m  Start $name error."
         exit 1
     fi
 
-    if [ "$pidsNum" = "0" ]; then
+    getPid
+
+    if [ $pidsNum -ne 0 ]; then
         echo -e "\n\033[1;31m[E]\033[0m  Start $name failed."
         exit 1
     fi
+
     echo -e "\n\033[1;32m[N]\033[0m  Start $name success."
 }
 
 doStop() {
     echo -en "\033[1;36m[I]\033[0m  Stopping $name."
-    if su thin -s /bin/bash -c "$bin stop -C $config"; then
-        echo -n '.'
-    else
+
+    if ! su thin -s /bin/bash -c "$bin stop -C $config"; then
         echo -e "\n\033[1;31m[E]\033[0m  Stop $name error."
         exit 1
     fi
 
     getPid
-    echo -n '.'
 
-    if [ "$pidsNum" != "0" ]; then
+    if [ $pidsNum -gt 0 ]; then
         echo -e "\n\033[1;31m[E]\033[0m  Stop $name failed."
         exit 1
     fi
+
     echo -e "\n\033[1;32m[N]\033[0m  Stop $name success."
 }
 
 case "$1" in
     start)
     getPid
-    if [ "$pidsNum" = "0" ]; then
-        doStart
-    else
-        echo -e "\033[1;33m[W]\033[0m  $name is already running. $output"
+    if [ $pidsNum -gt 0 ]; then
+        echo -e "\033[1;33m[W]\033[0m  $name is already running.$output."
+        exit 0
     fi
+
+    doStart
     ;;
 
     stop)
     getPid
-    if [ "$pidsNum" = "0" ]; then
+    if [ $pidsNum -ne 0 ]; then
         echo -e "\033[1;33m[W]\033[0m  $name isn't running."
-    else
-        doStop
+        exit 0
     fi
+
+    doStop
     ;;
 
     restart)
     getPid
-    if [ "$pidsNum" = "0" ]; then
-        echo -e "\033[1;33m[W]\033[0m  $name isn't running"
+    if [ $pidsNum -ne 0 ]; then
+        echo -e "\033[1;33m[W]\033[0m  $name isn't running."
         doStart
-    else
-        echo -e "\033[1;36m[I]\033[0m  Restarting $name:"
-        doStop
-        doStart
+        exit 0
     fi
+
+    echo -e "\033[1;36m[I]\033[0m  Restarting $name:"
+    doStop
+    doStart
     ;;
 
     force-reload)
     getPid
-    if [ "$pidsNum" = "0" ]; then
-        echo -e "\033[1;31m[E]\033[0m  $name isn't running"
+    if [ $pidsNum -ne 0 ]; then
+        echo -e "\033[1;31m[E]\033[0m  $name isn't running."
         exit 7
-    else
-        echo -e "\033[1;36m[I]\033[0m  Forcefully reloading (restarting) $name:"
-        doStop
-        doStart
     fi
+
+    echo -e "\033[1;36m[I]\033[0m  Forcefully reloading (restarting) $name:"
+    doStop
+    doStart
     ;;
 
     status)
     getPid
-    if [ "$pidsNum" = "0" ]; then
+    if [ $pidsNum -ne 0 ]; then
         echo -e "\033[1;32m[N]\033[0m  $name isn't running."
         exit 3
-    else
-        echo -e "\033[1;32m[N]\033[0m  $name is running. $output"
     fi
+
+    echo -e "\033[1;32m[N]\033[0m  $name is running.$output."
     ;;
 
     *)
