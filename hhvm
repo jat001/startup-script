@@ -69,21 +69,22 @@ doStart() {
 
     if [ ! -f "$log" ]; then
         touch "$log"
-        chown www:www "$log"
+        chown php:php "$log"
     fi
 
     ### I don't want it to run as root. But the program may be doesn't have permissions to create the log file.
     ### So you need to create them manually, and change owner & group. You can find the path in the configuration file.
-    if ! su www -s /bin/bash -c "$bin -c '$config' -m daemon"; then
+    if ! su php -s /bin/bash -c "$bin -c '$config' -m daemon"; then
         echo -e "\n\033[1;31m[E]\033[0m  Start $name error."
         exit 1
     fi
 
+    sleep 1
+    echo -n '.'
+
     ### The default permission of the socket file is 600.
     chmod 666 $socketFile
 
-    sleep 1
-    echo -n '.'
     getPid
 
     ### Successfully start the program if the process exists after 5 seconds.
