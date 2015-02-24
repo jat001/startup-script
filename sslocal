@@ -40,7 +40,7 @@ if [ ! -r "$config" ]; then
 fi
 
 ### In the most cases, the log file of program is in `/var/log`. You are free to modify this variable.
-log=/var/log/shadowsocks.log
+log=/var/log/$name.log
 
 ### By default, the pid file of program is in `/var/run`. So you don't need to modify this variable.
 pidFile=/var/run/$name.pid
@@ -64,18 +64,16 @@ getPid() {
 doStart() {
     echo -en "\033[1;36m[I]\033[0m  Starting $name."
 
-    if ! nohup $bin -c "$config" >> "$log" 2>&1 & then
+    if ! $bin -c "$config" -d start --pid-file $pidFile --log-file "$log"; then
         echo -e "\n\033[1;31m[E]\033[0m  Start $name error."
         exit 1
     fi
 
-    pid=$!
-    echo -n $pid > $pidFile
+    getPid
 
     ### Successfully start the program if the process exists after 5 seconds.
     for (( i=0; i<=5; i++ )); do
         if ! kill -0 $pid 2>/dev/null; then
-            rm -f $pidFile
             echo -e "\n\033[1;31m[E]\033[0m  Start $name failed."
             exit 1
         fi
@@ -90,7 +88,7 @@ doStart() {
 doStop() {
     echo -en "\033[1;36m[I]\033[0m  Stopping $name."
 
-    if ! kill $pid; then
+    if ! $bin -c "$config" -d stop --pid-file $pidFile; then
         echo -e "\n\033[1;31m[E]\033[0m  Stop $name error. Try using $script kill."
         exit 1
     fi
@@ -98,7 +96,6 @@ doStop() {
     ### Successfully stop the program if the process doesn't exists in 10 seconds.
     for (( i=0; i<=10; i++ )); do
         if ! kill -0 $pid 2>/dev/null; then
-            rm -f $pidFile
             echo -e "\n\033[1;32m[N]\033[0m  Stop $name success."
             return 0
         fi
