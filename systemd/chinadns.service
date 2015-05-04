@@ -1,0 +1,10 @@
+[Unit]
+Description=Protect yourself against DNS poisoning in China.
+After=network.target auditd.service
+
+[Service]
+ExecStart=/usr/local/chinadns/bin/chinadns -c /usr/local/chinadns/share/chnroute.txt -b 127.0.0.1 -p 63 -s 223.5.5.5,223.6.6.6,114.114.114.114,114.114.115.115,8.8.8.8,8.8.4.4 -m
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

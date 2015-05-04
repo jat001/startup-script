@@ -1,6 +1,12 @@
 Linux Init Scripts
 ====================
 
+### Note:
+
+I am using Ubuntu on my servers and [systemd](http://www.freedesktop.org/wiki/Software/systemd/) has replaced [upstart](http://upstart.ubuntu.com) at Ubuntu 15.04 and later releases. So I will NOT update the script which I do not in use any more.
+
+--------------------
+
 Some simple but useful init scripts in `/etc/init.d`.
 
 You need to add them to system services using `chkconfig`, `sysv-rc-conf`, `update-rc.d` or `insserv`.
@@ -57,6 +63,12 @@ Some init scripts may in conflict with the software own scripts. Such as rsync-s
 Linux 启动脚本
 =============
 
+### 注意:
+
+我在我的服务器上使用 Ubuntu，而在 Ubuntu 15.04 及之后版本中，[systemd](http://www.freedesktop.org/wiki/Software/systemd/) 替换了 [upstart](http://upstart.ubuntu.com)，所以我不会再更新我不再使用的脚本。
+
+--------------------
+
 一些简单但有用的启动脚本，放在 `/etc/init.d` 中。
 
 你需要使用 `chkconfig`、`sysv-rc-conf`、`update-rc.d` 或 `insserv` 添加它们到系统服务中。
@@ -101,7 +113,7 @@ script
 end script
 ```
 
-### 注意
+### 警告
 
 部分启动脚本可能与软件自带脚本冲突，如 rsync-server 和 rsync，munin-server 和 munin、munin-node，**请勿同时使用**！
 
