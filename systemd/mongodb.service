@@ -1,0 +1,14 @@
+[Unit]
+Description=High-performance, schema-free document-oriented database
+After=network.target
+
+[Service]
+User=mongodb
+PermissionsStartOnly=true
+ExecStartPre=/usr/bin/bash -c 'echo "never" > /sys/kernel/mm/transparent_hugepage/enabled; echo "never" > /sys/kernel/mm/transparent_hugepage/defrag'
+ExecStart=/usr/bin/mongod --quiet --config /data/etc/mongodb/mongodb.yaml
+User=mongodb
+Group=mongodb
+
+[Install]
+WantedBy=multi-user.target

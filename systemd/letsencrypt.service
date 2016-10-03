@@ -1,0 +1,10 @@
+[Unit]
+Description=Renew Let’s Encrypt issued certificates
+After=syslog.target network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/certbot certonly -c /data/etc/letsencrypt/cli.ini
+
+[Install]
+WantedBy=multi-user.target

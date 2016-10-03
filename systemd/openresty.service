@@ -1,0 +1,15 @@
+[Unit]
+Description=A high performance web server and a reverse proxy server
+After=syslog.target network.target
+
+[Service]
+Type=forking
+PIDFile=/run/nginx.pid
+ExecStartPre=/opt/openresty/nginx/sbin/nginx -t -q -c /data/etc/nginx/nginx.conf
+ExecStartPost=/bin/bash -c 'i=1; while [ ! -s /run/test.pid ]; do [ $i -gt 20 ] && exit 1 || (( i++ )) && sleep 0.2; done'
+ExecStart=/opt/openresty/nginx/sbin/nginx -c /data/etc/nginx/nginx.conf
+ExecReload=/opt/openresty/nginx/sbin/nginx -s reload -c /data/etc/nginx/nginx.conf
+ExecStop=/opt/openresty/nginx/sbin/nginx -s quit -c /data/etc/nginx/nginx.conf
+
+[Install]
+WantedBy=multi-user.target

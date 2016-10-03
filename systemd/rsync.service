@@ -1,0 +1,11 @@
+[Unit]
+Description=rsync daemon
+After=syslog.target network.target
+
+[Service]
+Type=forking
+PIDFile=/run/rsyncd.pid
+ExecStart=/usr/bin/rsync --daemon --config=/data/etc/rsync/rsync.conf
+
+[Install]
+WantedBy=multi-user.target
